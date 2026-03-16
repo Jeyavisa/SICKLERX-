@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SICKLERX – The Cure</title>
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#1a6fa3;--primary-light:#e8f4fd;--primary-dark:#0d4f7a;
+  --secondary:#2ecc8a;--secondary-light:#e8faf3;
+  --accent:#f4f9fd;--danger:#e05252;--warning:#f5a623;
+  --text:#1a2332;--text-muted:#6b7a90;--border:#d8e6f0;
+  --white:#ffffff;--bg:#f4f9fd;--card:#ffffff;
+  --shadow:0 2px 12px rgba(26,111,163,0.08);
+  --shadow-hover:0 6px 24px rgba(26,111,163,0.16);
+  --radius:12px;--radius-lg:18px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+#root{min-height:100vh}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{transform:translateX(-20px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.fade-in{animation:fadeIn 0.45s ease both}
+.slide-in{animation:slideIn 0.35s ease both}
+.navbar{background:var(--white);border-bottom:1.5px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(26,111,163,0.06)}
+.nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px}
+.nav-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--primary)}
+.nav-title span{color:var(--secondary)}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-btn{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:500;transition:all 0.2s}
+.nav-ghost{background:transparent;color:var(--text-muted)}
+.nav-ghost:hover{background:var(--accent);color:var(--primary)}
+.nav-active{background:var(--primary-light);color:var(--primary)}
+.nav-primary{background:var(--primary);color:white}
+.nav-primary:hover{background:var(--primary-dark)}
+.page{padding:2rem;max-width:1200px;margin:0 auto}
+.page-sm{padding:2rem;max-width:480px;margin:0 auto}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow)}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:1rem}
+.btn{padding:10px 22px;border-radius:9px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn:disabled{opacity:0.55;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover:not(:disabled){background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,111,163,0.25)}
+.btn-secondary{background:var(--secondary);color:white}
+.btn-secondary:hover:not(:disabled){background:#25a872;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-outline:hover:not(:disabled){background:var(--primary-light)}
+.btn-danger{background:#fff0f0;color:var(--danger);border:1px solid #fdd}
+.btn-danger:hover:not(:disabled){background:#ffe4e4}
+.btn-sm{padding:6px 14px;font-size:0.8rem}
+.btn-lg{padding:14px 32px;font-size:1rem}
+.btn-block{width:100%;justify-content:center}
+.form-group{margin-bottom:1.1rem}
+.form-label{display:block;font-size:0.85rem;font-weight:500;color:var(--text-muted);margin-bottom:5px}
+.form-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--text);background:var(--white);transition:border-color 0.2s,box-shadow 0.2s;outline:none}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,111,163,0.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.alert{padding:12px 16px;border-radius:9px;font-size:0.875rem;margin-bottom:1rem}
+.alert-success{background:var(--secondary-light);color:#1a7a54;border:1px solid #b5e8d3}
+.alert-error{background:#fff0f0;color:#a33030;border:1px solid #fdd}
+.alert-info{background:var(--primary-light);color:var(--primary-dark);border:1px solid #b8d9f0}
+.badge{padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:500;display:inline-block}
+.badge-green{background:var(--secondary-light);color:#1a7a54}
+.badge-blue{background:var(--primary-light);color:var(--primary-dark)}
+.badge-gray{background:#f0f0f0;color:var(--text-muted)}
+.badge-red{background:#fff0f0;color:var(--danger)}
+.badge-orange{background:#fff8e6;color:#b07a10}
+.table-wrap{overflow-x:auto}
+.table{width:100%;border-collapse:collapse;font-size:0.875rem}
+.table th{text-align:left;padding:10px 14px;background:var(--accent);color:var(--text-muted);font-weight:500;font-size:0.8rem;border-bottom:1.5px solid var(--border)}
+.table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:var(--accent)}
+.chat-widget{position:fixed;bottom:24px;right:24px;z-index:999}
+.chat-fab{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;cursor:pointer;color:white;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(26,111,163,0.35);transition:transform 0.2s;animation:bounce 2.5s ease-in-out infinite}
+.chat-fab:hover{transform:scale(1.08)}
+.chat-panel{position:absolute;bottom:64px;right:0;width:340px;max-height:480px;background:var(--white);border:1.5px solid var(--border);border-radius:18px;box-shadow:0 12px 40px rgba(26,111,163,0.18);display:flex;flex-direction:column;overflow:hidden;animation:fadeIn 0.25s ease}
+.chat-header{background:linear-gradient(135deg,var(--primary),#1e85c3);color:white;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.chat-msg{max-width:85%;padding:9px 13px;border-radius:14px;font-size:0.83rem;line-height:1.5}
+.chat-bot{background:var(--accent);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-user{background:var(--primary);color:white;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-input-row{padding:10px;border-top:1px solid var(--border);display:flex;gap:8px}
+.chat-in{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:0.83rem;outline:none;background:var(--bg)}
+.chat-in:focus{border-color:var(--primary)}
+.chat-send{width:36px;height:36px;border-radius:50%;background:var(--primary);border:none;cursor:pointer;color:white;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+.chat-send:hover{background:var(--primary-dark)}
+.hero{background:linear-gradient(135deg,#0d4f7a 0%,#1a6fa3 50%,#1e99c0 100%);color:white;padding:5rem 2rem;text-align:center}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:700;margin-bottom:1rem;line-height:1.2}
+.hero-title span{color:#6ee8b4}
+.hero-sub{font-size:1.15rem;opacity:0.88;max-width:560px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hbtn-w{background:white;color:var(--primary);padding:12px 28px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.95rem;transition:all 0.2s}
+.hbtn-w:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.hbtn-o{background:transparent;color:white;padding:12px 28px;border-radius:10px;border:2px solid rgba(255,255,255,0.5);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.95rem;transition:all 0.2s}
+.hbtn-o:hover{border-color:white;background:rgba(255,255,255,0.1)}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:2rem}
+.feature-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;transition:all 0.25s;cursor:pointer}
+.feature-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-3px)}
+.ficon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:1rem}
+.ficon-blue{background:var(--primary-light)}
+.ficon-green{background:var(--secondary-light)}
+.ficon-purple{background:#f0eeff}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin-bottom:2rem}
+.stat-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;display:flex;align-items:center;gap:14px}
+.stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block}
+input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--primary);cursor:pointer;box-shadow:0 2px 6px rgba(26,111,163,0.3)}
+.range-labels{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);margin-top:4px}
+.section-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:0.4rem}
+.section-sub{color:var(--text-muted);font-size:0.9rem;margin-bottom:1.75rem}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text-muted)}
+.empty-icon{font-size:3rem;margin-bottom:1rem}
+.footer{background:var(--white);border-top:1.5px solid var(--border);padding:1.5rem 2rem;text-align:center;color:var(--text-muted);font-size:0.83rem;margin-top:3rem}
+.auth-header{text-align:center;margin-bottom:2rem}
+.auth-logo{width:58px;height:58px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin:0 auto 1rem}
+.dot{display:inline-block;width:6px;height:6px;background:var(--text-muted);border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:0.2s}
+.dot:nth-child(3){animation-delay:0.4s}
+textarea.form-input{resize:vertical;min-height:80px}
+.med-taken{opacity:0.5;text-decoration:line-through}
+@media(max-width:768px){.msg-grid{grid-template-columns:1fr!important}}
+@media(max-width:640px){
+  .navbar{padding:0 1rem}
+  .nav-ghost{display:none}
+  .hero{padding:3rem 1rem}
+  .page{padding:1rem}
+  .page-sm{padding:1rem}
+  .chat-panel{width:300px}
+  .form-row{grid-template-columns:1fr}
+  .chat-widget{bottom:16px;right:16px}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef} = React;
+
+const DB = {
+  getUser:()=>JSON.parse(localStorage.getItem('sx_user')||'null'),
+  setUser:(u)=>localStorage.setItem('sx_user',JSON.stringify(u)),
+  clearUser:()=>localStorage.removeItem('sx_user'),
+  getUsers:()=>JSON.parse(localStorage.getItem('sx_users')||'[]'),
+  saveUser:(u)=>{const a=DB.getUsers();const i=a.findIndex(x=>x.email===u.email);if(i>=0)a[i]=u;else a.push(u);localStorage.setItem('sx_users',JSON.stringify(a))},
+  getMeds:(uid)=>JSON.parse(localStorage.getItem(`sx_meds_${uid}`)||'[]'),
+  saveMeds:(uid,m)=>localStorage.setItem(`sx_meds_${uid}`,JSON.stringify(m)),
+  getSymps:(uid)=>JSON.parse(localStorage.getItem(`sx_syms_${uid}`)||'[]'),
+  saveSymps:(uid,s)=>localStorage.setItem(`sx_syms_${uid}`,JSON.stringify(s)),
+  getAppts:(uid)=>JSON.parse(localStorage.getItem(`sx_appts_${uid}`)||'[]'),
+  saveAppts:(uid,a)=>localStorage.setItem(`sx_appts_${uid}`,JSON.stringify(a)),
+  getDoctorMsgs:(uid)=>JSON.parse(localStorage.getItem(`sx_dmsgs_${uid}`)||"{}" ),
+  saveDoctorMsgs:(uid,m)=>localStorage.setItem(`sx_dmsgs_${uid}`,JSON.stringify(m)),
+};
+
+async function aiChat(msg, hist) {
+  const sys=`You are SicklerAI, a compassionate health assistant specialized in sickle cell anemia (SCD). 
+Provide accurate, empathetic, practical support. Topics: pain crises, hydration, medications (hydroxyurea, folic acid), triggers, hospital visits, nutrition, lifestyle, emotional support.
+Keep responses concise (2-4 sentences), warm, and practical. Always recommend consulting a doctor for serious concerns. Never diagnose.`;
+  try {
+    const messages=[...hist.slice(-8).map(m=>({role:m.role,content:m.content})),{role:'user',content:msg}];
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})
+    });
+    const d=await r.json();
+    return d.content?.[0]?.text||"I'm here to help. Please share more about your concern.";
+  } catch {
+    return "Connection issue. For urgent concerns, please contact your healthcare provider directly.";
+  }
+}
+
+async function doctorChat(msg, hist, doctor, patientName) {
+  const sys='You are '+doctor.name+', a '+doctor.specialty+' at '+doctor.hospital+'. You are messaging a sickle cell disease patient named '+patientName+' through the SICKLERX secure patient portal. Respond as this real, professional, empathetic doctor would. Give medical guidance relevant to sickle cell disease. Keep replies focused, professional but warm, 2-5 sentences. Ask follow-up questions when needed. Remind them to come in person for urgent issues.';
+  try {
+    const messages=[...hist.slice(-10).map(m=>({role:m.role,content:m.content})),{role:'user',content:msg}];
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})
+    });
+    const d=await r.json();
+    return d.content?.[0]?.text||'Thank you for your message. I will review your case and get back to you shortly.';
+  } catch {
+    return 'I was unable to send your message. Please try again or call the clinic directly.';
+  }
+}
+
+function ChatWidget({user}) {
+  const [open,setOpen]=useState(false);
+  const [msgs,setMsgs]=useState([{role:'assistant',content:`Hi${user?' '+user.name.split(' ')[0]:''}! 👋 I'm SicklerAI. Ask me anything about sickle cell care, medications, or pain management.`}]);
+  const [inp,setInp]=useState('');
+  const [loading,setLoading]=useState(false);
+  const endRef=useRef(null);
+  useEffect(()=>{endRef.current?.scrollIntoView({behavior:'smooth'})},[msgs]);
+  const send=async()=>{
+    if(!inp.trim()||loading)return;
+    const m=inp.trim();setInp('');
+    setMsgs(p=>[...p,{role:'user',content:m}]);
+    setLoading(true);
+    const r=await aiChat(m,msgs);
+    setMsgs(p=>[...p,{role:'assistant',content:r}]);
+    setLoading(false);
+  };
+  return (
+    <div className="chat-widget">
+      {open&&(
+        <div className="chat-panel">
+          <div className="chat-header">
+            <div style={{width:32,height:32,background:'rgba(255,255,255,0.25)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14}}>🩺</div>
+            <div style={{flex:1}}>
+              <div style={{fontWeight:600,fontSize:'0.9rem'}}>SicklerAI</div>
+              <div style={{fontSize:'0.72rem',opacity:0.8}}>Health Assistant • Online</div>
+            </div>
+            <button onClick={()=>setOpen(false)} style={{background:'none',border:'none',color:'white',fontSize:'18px',cursor:'pointer'}}>×</button>
+          </div>
+          <div className="chat-msgs">
+            {msgs.map((m,i)=>(
+              <div key={i} className={`chat-msg ${m.role==='assistant'?'chat-bot':'chat-user'}`}>{m.content}</div>
+            ))}
+            {loading&&<div className="chat-msg chat-bot" style={{display:'flex',gap:4,alignItems:'center'}}><span className="dot"/><span className="dot"/><span className="dot"/></div>}
+            <div ref={endRef}/>
+          </div>
+          <div className="chat-input-row">
+            <input className="chat-in" value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Ask about sickle cell care..."/>
+            <button className="chat-send" onClick={send}>➤</button>
+          </div>
+        </div>
+      )}
+      <button className="chat-fab" onClick={()=>setOpen(!open)}>{open?'×':'🩺'}</button>
+    </div>
+  );
+}
+
+function Navbar({page,setPage,user,logout}) {
+  return (
+    <nav className="navbar">
+      <div className="nav-brand" onClick={()=>setPage('home')}>
+        <div className="nav-logo">Rx</div>
+        <span className="nav-title">SICKLER<span>RX</span></span>
+      </div>
+      <div className="nav-links">
+        {user?(
+          <>
+            <button className={`nav-btn ${page==='dashboard'?'nav-active':'nav-ghost'}`} onClick={()=>setPage('dashboard')}>Dashboard</button>
+            <button className={`nav-btn ${page==='medications'?'nav-active':'nav-ghost'}`} onClick={()=>setPage('medications')}>Medications</button>
+            <button className={`nav-btn ${page==='symptoms'?'nav-active':'nav-ghost'}`} onClick={()=>setPage('symptoms')}>Symptoms</button>
+            <button className={`nav-btn ${page==='appointments'?'nav-active':'nav-ghost'}`} onClick={()=>setPage('appointments')}>Appointments</button>
+            <button className={`nav-btn ${page==='messages'?'nav-active':'nav-ghost'}`} onClick={()=>setPage('messages')}>
+              Messages
+            </button>
+            <button className={`nav-btn ${page==='chatbot'?'nav-active':'nav-ghost'}`} onClick={()=>setPage('chatbot')}>AI Chat</button>
+            <button className="nav-btn nav-ghost" onClick={logout}>Logout</button>
+          </>
+        ):(
+          <>
+            <button className="nav-btn nav-ghost" onClick={()=>setPage('medications')}>Tracker</button>
+            <button className="nav-btn nav-ghost" onClick={()=>setPage('login')}>Login</button>
+            <button className="nav-btn nav-primary" onClick={()=>setPage('register')}>Register</button>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+}
+
+function Home({setPage}) {
+  return (
+    <div className="fade-in">
+      <div className="hero">
+        <div style={{maxWidth:720,margin:'0 auto'}}>
+          <div style={{display:'inline-block',background:'rgba(110,232,180,0.2)',color:'#6ee8b4',padding:'4px 14px',borderRadius:20,fontSize:'0.8rem',fontWeight:500,marginBottom:'1rem',border:'1px solid rgba(110,232,180,0.3)'}}>
+            🩸 Sickle Cell Disease Management Platform
+          </div>
+          <h1 className="hero-title">SICKLER<span>RX</span><br/>– The Cure</h1>
+          <p className="hero-sub">Smart, compassionate healthcare management for sickle cell patients. Track medications, monitor symptoms, and get AI-powered health guidance — all in one place.</p>
+          <div className="hero-btns">
+            <button className="hbtn-w" onClick={()=>setPage('register')}>🚀 Get Started Free</button>
+            <button className="hbtn-o" onClick={()=>setPage('login')}>Sign In</button>
+            <button className="hbtn-o" onClick={()=>setPage('medications')}>💊 Medication Tracker</button>
+            <button className="hbtn-o" onClick={()=>setPage('symptoms')}>📊 Symptom Monitor</button>
+          </div>
+        </div>
+      </div>
+      <div className="page">
+        <div style={{textAlign:'center',marginBottom:'3rem'}}>
+          <h2 className="section-title">Everything You Need to Manage SCD</h2>
+          <p className="section-sub">Comprehensive tools designed with sickle cell patients in mind</p>
+        </div>
+        <div className="features-grid">
+          {[
+            {icon:'💊',cls:'ficon-blue',title:'Medication Tracking',desc:'Never miss a dose. Log, schedule, and track all your medications with daily checklists.',page:'medications'},
+            {icon:'📊',cls:'ficon-green',title:'Symptom Monitoring',desc:'Track pain levels, fatigue, hydration, and mood daily. Visualize trends with interactive charts.',page:'symptoms'},
+            {icon:'🤖',cls:'ficon-purple',title:'AI Health Assistant',desc:'Get instant answers about sickle cell care from our AI assistant powered by Claude.',page:'chatbot'},
+            {icon:'🏥',cls:'ficon-blue',title:'Health Dashboard',desc:'A personalized overview — medications, symptoms, and wellness at a glance.',page:'dashboard'},
+            {icon:'📅',cls:'ficon-green',title:'Doctor Appointments',desc:'Book, manage, and track appointments with your specialist. Get reminders and prep notes.',page:'appointments'},
+            {icon:'🔒',cls:'ficon-purple',title:'Secure & Private',desc:'Your health data is yours. Encrypted and private — only you have access.',page:null},
+            {icon:'📱',cls:'ficon-purple',title:'Mobile Friendly',desc:'Access SICKLERX from any device — phone, tablet, or desktop.',page:null},
+          ].map((f,i)=>(
+            <div key={i} className="feature-card" onClick={()=>f.page&&setPage(f.page)}>
+              <div className={`ficon ${f.cls}`}>{f.icon}</div>
+              <div style={{fontWeight:600,fontSize:'1rem',marginBottom:'0.5rem'}}>{f.title}</div>
+              <div style={{fontSize:'0.875rem',color:'var(--text-muted)',lineHeight:1.6}}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{background:'linear-gradient(135deg,var(--primary-light),var(--secondary-light))',borderRadius:20,padding:'2.5rem',marginTop:'3rem',textAlign:'center'}}>
+          <h3 style={{fontFamily:'Playfair Display,serif',fontSize:'1.5rem',marginBottom:'0.75rem',color:'var(--primary-dark)'}}>Did You Know?</h3>
+          <p style={{color:'var(--text-muted)',maxWidth:600,margin:'0 auto 1.5rem',lineHeight:1.7}}>
+            Over 100,000 people in the United States and millions worldwide live with sickle cell disease. Consistent medication adherence and symptom monitoring can significantly reduce crisis frequency and improve quality of life.
+          </p>
+          <button className="btn btn-primary btn-lg" onClick={()=>setPage('register')}>Start Your Health Journey →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Register({setPage,login}) {
+  const [form,setForm]=useState({name:'',email:'',password:'',confirmPassword:'',dob:'',gender:'',bloodGroup:'',phone:'',emergencyContact:'',medicalHistory:''});
+  const [error,setError]=useState('');const [success,setSuccess]=useState('');const [loading,setLoading]=useState(false);
+  const ch=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
+  const submit=()=>{
+    setError('');
+    if(!form.name||!form.email||!form.password)return setError('Please fill in required fields.');
+    if(form.password!==form.confirmPassword)return setError('Passwords do not match.');
+    if(form.password.length<6)return setError('Password must be at least 6 characters.');
+    if(DB.getUsers().find(u=>u.email===form.email))return setError('Email already registered.');
+    setLoading(true);
+    setTimeout(()=>{
+      const u={id:Date.now().toString(),name:form.name,email:form.email,password:btoa(form.password),dob:form.dob,gender:form.gender,bloodGroup:form.bloodGroup,phone:form.phone,emergencyContact:form.emergencyContact,medicalHistory:form.medicalHistory,createdAt:new Date().toISOString()};
+      DB.saveUser(u);setLoading(false);setSuccess('Account created! Redirecting...');
+      setTimeout(()=>{login(u);setPage('dashboard');},1200);
+    },800);
+  };
+  return (
+    <div className="page-sm fade-in" style={{paddingTop:'2rem',paddingBottom:'3rem'}}>
+      <div className="auth-header">
+        <div className="auth-logo">Rx</div>
+        <h1 className="section-title">Create Your Account</h1>
+        <p style={{color:'var(--text-muted)',fontSize:'0.875rem'}}>Join SICKLERX and take control of your health</p>
+      </div>
+      <div className="card">
+        {error&&<div className="alert alert-error">⚠ {error}</div>}
+        {success&&<div className="alert alert-success">✓ {success}</div>}
+        <div className="form-row">
+          <div className="form-group"><label className="form-label">Full Name *</label><input className="form-input" value={form.name} onChange={ch('name')} placeholder="John Doe"/></div>
+          <div className="form-group"><label className="form-label">Email *</label><input className="form-input" type="email" value={form.email} onChange={ch('email')} placeholder="you@email.com"/></div>
+        </div>
+        <div className="form-row">
+          <div className="form-group"><label className="form-label">Password *</label><input className="form-input" type="password" value={form.password} onChange={ch('password')} placeholder="Min. 6 characters"/></div>
+          <div className="form-group"><label className="form-label">Confirm Password *</label><input className="form-input" type="password" value={form.confirmPassword} onChange={ch('confirmPassword')} placeholder="Repeat password"/></div>
+        </div>
+        <div className="form-row">
+          <div className="form-group"><label className="form-label">Date of Birth</label><input className="form-input" type="date" value={form.dob} onChange={ch('dob')}/></div>
+          <div className="form-group"><label className="form-label">Gender</label>
+            <select className="form-input" value={form.gender} onChange={ch('gender')}><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select>
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group"><label className="form-label">Blood Group</label>
+            <select className="form-input" value={form.bloodGroup} onChange={ch('bloodGroup')}><option value="">Select</option>{['A+','A-','B+','B-','AB+','AB-','O+','O-','SS','SC','Sβ+','Sβ0'].map(g=><option key={g}>{g}</option>)}</select>
+          </div>
+          <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={form.phone} onChange={ch('phone')} placeholder="+1 234 567 8900"/></div>
+        </div>
+        <div className="form-group"><label className="form-label">Emergency Contact</label><input className="form-input" value={form.emergencyContact} onChange={ch('emergencyContact')} placeholder="Name & Phone number"/></div>
+        <div className="form-group"><label className="form-label">Medical History / Notes</label>
+          <textarea className="form-input" value={form.medicalHistory} onChange={ch('medicalHistory')} placeholder="Prior hospitalizations, complications, current medications..."/>
+        </div>
+        <button className="btn btn-primary btn-block btn-lg" onClick={submit} disabled={loading}>
+          {loading?<><span className="spinner"/> Creating Account...</>:'🚀 Create Account'}
+        </button>
+        <p style={{textAlign:'center',marginTop:'1rem',fontSize:'0.875rem',color:'var(--text-muted)'}}>
+          Already registered? <button onClick={()=>setPage('login')} style={{background:'none',border:'none',color:'var(--primary)',cursor:'pointer',fontWeight:500}}>Sign In</button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Login({setPage,login}) {
+  const [form,setForm]=useState({email:'',password:''});
+  const [error,setError]=useState('');const [loading,setLoading]=useState(false);
+  const ch=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
+  const submit=()=>{
+    setError('');
+    if(!form.email||!form.password)return setError('Please enter email and password.');
+    setLoading(true);
+    setTimeout(()=>{
+      const u=DB.getUsers().find(u=>u.email===form.email&&u.password===btoa(form.password));
+      setLoading(false);
+      if(!u)return setError('Invalid email or password.');
+      login(u);setPage('dashboard');
+    },600);
+  };
+  const demo=()=>{
+    try {
+      const demoUser={id:'demo001',name:'Alex Johnson',email:'demo@sicklerx.com',password:btoa('demo123'),dob:'1995-06-14',gender:'Male',bloodGroup:'SS',phone:'+1 555 0100',emergencyContact:'Mrs. Johnson – +1 555 0101',medicalHistory:'Diagnosed with HbSS sickle cell disease at birth. Currently on Hydroxyurea 500mg daily and Folic Acid 1mg.',createdAt:new Date().toISOString()};
+      DB.saveUser(demoUser);
+      const today=new Date().toISOString().split('T')[0];
+      DB.saveMeds('demo001',[
+        {id:'m1',medicationName:'Hydroxyurea',dosage:'500mg',time:'08:00',date:today,takenStatus:false},
+        {id:'m2',medicationName:'Folic Acid',dosage:'1mg',time:'08:00',date:today,takenStatus:true},
+        {id:'m3',medicationName:'Penicillin V',dosage:'250mg',time:'20:00',date:today,takenStatus:false},
+        {id:'m4',medicationName:'Ibuprofen',dosage:'400mg',time:'12:00',date:today,takenStatus:true},
+      ]);
+      const now=new Date();
+      DB.saveSymps('demo001',Array.from({length:7},(_,i)=>{
+        const dt=new Date(now);dt.setDate(dt.getDate()-(6-i));
+        return{id:'s'+i,painLevel:[3,5,2,7,4,3,6][i],fatigueLevel:[4,6,3,7,5,3,5][i],temperature:(36.5+Math.random()*1.2).toFixed(1),hydrationLevel:[3,2,4,2,3,4,3][i],mood:['Good','Fair','Good','Poor','Fair','Good','Fair'][i],notes:i===3?'Mild crisis, stayed hydrated':'',createdAt:dt.toISOString()};
+      }));
+      const futureDate=(days)=>{const fd=new Date();fd.setDate(fd.getDate()+days);return fd.toISOString().split('T')[0];};
+      DB.saveDoctorMsgs('demo001',{
+        'd1':[
+          {role:'user',content:'Dr. Osei, I had a moderate pain crisis last Tuesday. My pain level was around 7/10. Should I adjust anything in my treatment?',ts:new Date(Date.now()-86400000*2).toISOString()},
+          {role:'assistant',content:"Thank you for letting me know, Alex. A pain level of 7/10 warrants close attention. Please ensure you are staying well-hydrated (at least 3 liters of water daily) and taking your prescribed pain medication as directed. If the pain reaches 9/10 or is accompanied by fever or shortness of breath, please go to the emergency room immediately. I would like to schedule a follow-up visit this week — can you come in Thursday?",ts:new Date(Date.now()-86400000*2+3600000).toISOString()},
+          {role:'user',content:'Thank you doctor. Thursday works for me. Should I bring my pain diary?',ts:new Date(Date.now()-86400000).toISOString()},
+          {role:'assistant',content:"Yes, please bring your pain diary and a list of all current medications. That will help me review your Hydroxyurea dosage and assess whether any adjustments are needed. See you Thursday at 10 AM — stay hydrated until then!",ts:new Date(Date.now()-86400000+1800000).toISOString()},
+        ],
+        'd2':[
+          {role:'user',content:'Dr. Mitchell, my latest CBC showed hemoglobin at 7.2 g/dL. Is this something I should be worried about?',ts:new Date(Date.now()-3600000*5).toISOString()},
+          {role:'assistant',content:"A hemoglobin of 7.2 g/dL is on the lower end for sickle cell patients, though many tolerate this level depending on their baseline. I would like to review the full CBC panel alongside your recent symptoms. Are you experiencing unusual fatigue, shortness of breath, or dizziness? Please let me know and we can schedule a review appointment.",ts:new Date(Date.now()-3600000*4).toISOString()},
+        ],
+      });
+      DB.saveAppts('demo001',[
+        {id:'a1',doctorId:'d1',doctorName:'Dr. Amara Osei',specialty:'Hematologist',hospital:'City Medical Center',date:futureDate(5),time:'10:00',visitType:'In-Person',reason:'Routine Check-Up',notes:'Monthly hydroxyurea monitoring',urgency:'Routine',status:'confirmed',bookedAt:new Date().toISOString()},
+        {id:'a2',doctorId:'d2',doctorName:'Dr. Sarah Mitchell',specialty:'Sickle Cell Specialist',hospital:'St. Lukes Hospital',date:futureDate(18),time:'14:30',visitType:'Telemedicine / Video Call',reason:'Medication Review',notes:'Review Hydroxyurea dosage adjustment',urgency:'Follow-Up',status:'confirmed',bookedAt:new Date().toISOString()},
+      ]);
+      login(demoUser);
+      setPage('dashboard');
+    } catch(e) {
+      console.error('Demo error:',e);
+      setError('Demo failed: '+e.message);
+    }
+  };
+  return (
+    <div className="page-sm fade-in" style={{paddingTop:'2rem',paddingBottom:'3rem'}}>
+      <div className="auth-header">
+        <div className="auth-logo">Rx</div>
+        <h1 className="section-title">Welcome Back</h1>
+        <p style={{color:'var(--text-muted)',fontSize:'0.875rem'}}>Sign in to your SICKLERX account</p>
+      </div>
+      <div className="card">
+        {error&&<div className="alert alert-error">⚠ {error}</div>}
+        <div className="form-group"><label className="form-label">Email Address</label><input className="form-input" type="email" value={form.email} onChange={ch('email')} onKeyDown={e=>e.key==='Enter'&&submit()} placeholder="you@email.com"/></div>
+        <div className="form-group"><label className="form-label">Password</label><input className="form-input" type="password" value={form.password} onChange={ch('password')} onKeyDown={e=>e.key==='Enter'&&submit()} placeholder="Your password"/></div>
+        <button className="btn btn-primary btn-block btn-lg" onClick={submit} disabled={loading} style={{marginBottom:10}}>
+          {loading?<><span className="spinner"/> Signing In...</>:'🔐 Sign In'}
+        </button>
+        <button className="btn btn-outline btn-block" onClick={demo}>🎯 Try Demo Account</button>
+        <p style={{textAlign:'center',marginTop:'1rem',fontSize:'0.875rem',color:'var(--text-muted)'}}>
+          New here? <button onClick={()=>setPage('register')} style={{background:'none',border:'none',color:'var(--primary)',cursor:'pointer',fontWeight:500}}>Create Account</button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({user,setPage}) {
+  const meds=DB.getMeds(user.id);
+  const syms=DB.getSymps(user.id);
+  const today=new Date().toISOString().split('T')[0];
+  const todayMeds=meds.filter(m=>m.date===today);
+  const taken=todayMeds.filter(m=>m.takenStatus).length;
+  const rec=syms.length?syms[syms.length-1]:null;
+  const pc=v=>v<=3?'#2ecc8a':v<=6?'#f5a623':'#e05252';
+  const hr=new Date().getHours();
+  const greet=hr<12?'Morning':hr<17?'Afternoon':'Evening';
+  return (
+    <div className="page fade-in">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:'1rem',marginBottom:'2rem'}}>
+        <div>
+          <h1 className="section-title">Good {greet}, {user.name.split(' ')[0]}! 👋</h1>
+          <p className="section-sub">Health overview · {new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+        </div>
+        <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+          <button className="btn btn-outline btn-sm" onClick={()=>setPage('medications')}>+ Log Medication</button>
+          <button className="btn btn-secondary btn-sm" onClick={()=>setPage('symptoms')}>+ Log Symptoms</button>
+        </div>
+      </div>
+      <div className="dash-grid">
+        {[
+          {icon:'💊',label:"Today's Meds",value:`${taken}/${todayMeds.length}`,sub:'taken today',bg:'var(--primary-light)'},
+          {icon:'🩸',label:'Last Pain Level',value:rec?`${rec.painLevel}/10`:'N/A',sub:'latest entry',bg:'var(--secondary-light)'},
+          {icon:'💧',label:'Hydration',value:rec?`${rec.hydrationLevel}/5`:'N/A',sub:'latest reading',bg:'#e8f4fd'},
+          {icon:'😊',label:'Mood',value:rec?.mood||'N/A',sub:'latest entry',bg:'#f0eeff'},
+        ].map((s,i)=>(
+          <div key={i} className="stat-card">
+            <div className="stat-icon" style={{background:s.bg}}>{s.icon}</div>
+            <div>
+              <div style={{fontSize:'0.78rem',color:'var(--text-muted)',marginBottom:2}}>{s.label}</div>
+              <div style={{fontSize:'1.4rem',fontWeight:700,color:'var(--text)'}}>{s.value}</div>
+              <div style={{fontSize:'0.75rem',color:'var(--text-muted)'}}>{s.sub}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:'1.5rem'}}>
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+            <h3 className="card-title" style={{margin:0}}>Today's Medications</h3>
+            <button className="btn btn-outline btn-sm" onClick={()=>setPage('medications')}>View All</button>
+          </div>
+          {todayMeds.length===0?(
+            <div className="empty"><div className="empty-icon">💊</div><p>No medications for today</p>
+              <button className="btn btn-primary btn-sm" style={{marginTop:'1rem'}} onClick={()=>setPage('medications')}>Add Medication</button>
+            </div>
+          ):todayMeds.map(m=>(
+            <div key={m.id} style={{display:'flex',alignItems:'center',padding:'10px 0',borderBottom:'1px solid var(--border)',gap:12}}>
+              <div style={{width:36,height:36,background:m.takenStatus?'var(--secondary-light)':'var(--accent)',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>{m.takenStatus?'✅':'💊'}</div>
+              <div style={{flex:1}} className={m.takenStatus?'med-taken':''}>
+                <div style={{fontWeight:500,fontSize:'0.875rem'}}>{m.medicationName}</div>
+                <div style={{fontSize:'0.775rem',color:'var(--text-muted)'}}>{m.dosage} · {m.time}</div>
+              </div>
+              <span className={`badge ${m.takenStatus?'badge-green':'badge-orange'}`}>{m.takenStatus?'✓ Taken':'⏰ Pending'}</span>
+            </div>
+          ))}
+        </div>
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+            <h3 className="card-title" style={{margin:0}}>Recent Symptoms</h3>
+            <button className="btn btn-outline btn-sm" onClick={()=>setPage('symptoms')}>Track Now</button>
+          </div>
+          {!rec?(
+            <div className="empty"><div className="empty-icon">📊</div><p>No symptoms logged yet</p>
+              <button className="btn btn-primary btn-sm" style={{marginTop:'1rem'}} onClick={()=>setPage('symptoms')}>Log Symptoms</button>
+            </div>
+          ):(
+            <>
+              <div style={{fontSize:'0.78rem',color:'var(--text-muted)',marginBottom:'0.75rem'}}>Last entry: {new Date(rec.createdAt).toLocaleDateString()}</div>
+              {[{l:'Pain Level',v:`${rec.painLevel}/10`,c:pc(rec.painLevel),p:rec.painLevel*10},{l:'Fatigue',v:`${rec.fatigueLevel}/10`,c:pc(rec.fatigueLevel),p:rec.fatigueLevel*10},{l:'Hydration',v:`${rec.hydrationLevel}/5`,c:'var(--primary)',p:rec.hydrationLevel*20}].map((item,i)=>(
+                <div key={i} style={{marginBottom:'0.75rem'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.825rem',marginBottom:4}}>
+                    <span style={{color:'var(--text-muted)'}}>{item.l}</span>
+                    <span style={{fontWeight:600,color:item.c}}>{item.v}</span>
+                  </div>
+                  <div style={{height:6,background:'var(--border)',borderRadius:3,overflow:'hidden'}}>
+                    <div style={{height:'100%',width:`${item.p}%`,background:item.c,borderRadius:3,transition:'width 0.6s ease'}}/>
+                  </div>
+                </div>
+              ))}
+              {rec.notes&&<div className="alert alert-info" style={{marginTop:'0.75rem'}}>📝 {rec.notes}</div>}
+            </>
+          )}
+        </div>
+        <div className="card" style={{background:'linear-gradient(135deg,var(--primary-light),var(--secondary-light))'}}>
+          <h3 className="card-title">💡 Daily Health Tip</h3>
+          <p style={{fontSize:'0.9rem',lineHeight:1.7,color:'var(--text)'}}>
+            {['Drink at least 8-10 glasses of water daily to help prevent sickling episodes.','Avoid extreme temperatures — both cold and heat can trigger pain crises.','Take your Hydroxyurea exactly as prescribed to reduce painful crises.','Get enough rest — fatigue can worsen sickle cell symptoms.','Track your symptoms daily to spot patterns and share with your doctor.'][new Date().getDay()%5]}
+          </p>
+          <div style={{marginTop:'1rem',padding:'10px 14px',background:'rgba(255,255,255,0.7)',borderRadius:10,fontSize:'0.825rem',color:'var(--text-muted)'}}>
+            🩸 Blood group on record: <strong style={{color:'var(--primary)'}}>{user.bloodGroup||'Not set'}</strong>
+          </div>
+          <button className="btn btn-primary btn-sm" style={{marginTop:'1rem'}} onClick={()=>setPage('chatbot')}>🤖 Ask SicklerAI</button>
+        </div>
+      </div>
+      {/* Doctor Messages Preview */}
+      {(()=>{
+        const dmsgs=DB.getDoctorMsgs(user.id);
+        const DOCS=[
+          {id:'d1',name:'Dr. Amara Osei',color:'#1a6fa3',img:'AO'},
+          {id:'d2',name:'Dr. Sarah Mitchell',color:'#2ecc8a',img:'SM'},
+          {id:'d3',name:'Dr. James Adeyemi',color:'#7c5cbf',img:'JA'},
+          {id:'d4',name:'Dr. Priya Nair',color:'#e05252',img:'PN'},
+          {id:'d5',name:'Dr. Michael Chen',color:'#f5a623',img:'MC'},
+          {id:'d6',name:'Dr. Fatima Al-Hassan',color:'#0d9e75',img:'FA'},
+        ];
+        const active=DOCS.filter(d=>dmsgs[d.id]&&dmsgs[d.id].length>0).slice(0,3);
+        return (
+          <div className="card" style={{marginTop:'1.5rem'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+              <h3 className="card-title" style={{margin:0}}>💬 Doctor Messages</h3>
+              <button className="btn btn-outline btn-sm" onClick={()=>setPage('messages')}>View All</button>
+            </div>
+            {active.length===0?(
+              <div className="empty" style={{padding:'1.5rem 1rem'}}>
+                <div style={{fontSize:'2rem',marginBottom:'0.5rem'}}>💬</div>
+                <p style={{marginBottom:'0.75rem'}}>No messages yet</p>
+                <button className="btn btn-primary btn-sm" onClick={()=>setPage('messages')}>Message a Doctor</button>
+              </div>
+            ):active.map(doc=>{
+              const conv=dmsgs[doc.id];
+              const last=conv[conv.length-1];
+              const ts=new Date(last.ts);
+              const diffH=(new Date()-ts)/3600000;
+              const timeStr=diffH<1?`${Math.round(diffH*60)}m ago`:diffH<24?ts.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}):ts.toLocaleDateString('en',{month:'short',day:'numeric'});
+              return (
+                <div key={doc.id} onClick={()=>setPage('messages')} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)',cursor:'pointer'}}>
+                  <div style={{width:38,height:38,borderRadius:'50%',background:doc.color+'18',border:`1.5px solid ${doc.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.78rem',color:doc.color,flexShrink:0}}>{doc.img}</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontWeight:600,fontSize:'0.85rem'}}>{doc.name}</div>
+                    <div style={{fontSize:'0.775rem',color:'var(--text-muted)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{last.role==='user'?'You: ':''}{last.content.slice(0,50)}{last.content.length>50?'…':''}</div>
+                  </div>
+                  <div style={{fontSize:'0.7rem',color:'var(--text-muted)',flexShrink:0}}>{timeStr}</div>
+                </div>
+              );
+            })}
+            <button className="btn btn-outline btn-sm" style={{marginTop:'0.75rem'}} onClick={()=>setPage('messages')}>+ New Message to Doctor</button>
+          </div>
+        );
+      })()}
+      {/* Upcoming Appointments */}
+      {(()=>{
+        const appts=DB.getAppts(user.id);
+        const now=new Date();
+        const upcoming=appts.filter(a=>new Date(a.date+'T'+a.time)>=now&&a.status!=='cancelled').sort((a,b)=>new Date(a.date+'T'+a.time)-new Date(b.date+'T'+b.time)).slice(0,3);
+        return (
+          <div className="card" style={{marginTop:'1.5rem'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+              <h3 className="card-title" style={{margin:0}}>📅 Upcoming Appointments</h3>
+              <button className="btn btn-outline btn-sm" onClick={()=>setPage('appointments')}>Book / View All</button>
+            </div>
+            {upcoming.length===0?(
+              <div className="empty" style={{padding:'1.5rem 1rem'}}>
+                <div style={{fontSize:'2rem',marginBottom:'0.5rem'}}>📅</div>
+                <p style={{marginBottom:'0.75rem'}}>No upcoming appointments</p>
+                <button className="btn btn-primary btn-sm" onClick={()=>setPage('appointments')}>Book an Appointment</button>
+              </div>
+            ):upcoming.map(a=>(
+              <div key={a.id} style={{display:'flex',alignItems:'center',gap:14,padding:'12px 0',borderBottom:'1px solid var(--border)'}}>
+                <div style={{width:44,height:44,background:'var(--primary-light)',borderRadius:12,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  <div style={{fontSize:'0.65rem',color:'var(--primary)',fontWeight:600,textTransform:'uppercase'}}>{new Date(a.date+'T12:00:00').toLocaleDateString('en',{month:'short'})}</div>
+                  <div style={{fontSize:'1.1rem',fontWeight:700,color:'var(--primary)',lineHeight:1}}>{new Date(a.date+'T12:00:00').getDate()}</div>
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:600,fontSize:'0.875rem'}}>{a.doctorName}</div>
+                  <div style={{fontSize:'0.775rem',color:'var(--text-muted)'}}>{a.specialty} · {a.time} · {a.visitType}</div>
+                </div>
+                <span className={`badge ${a.status==='confirmed'?'badge-green':a.status==='pending'?'badge-orange':'badge-blue'}`}>
+                  {a.status==='confirmed'?'✓ Confirmed':a.status==='pending'?'⏳ Pending':'🔄 '+a.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
+      <div className="card" style={{marginTop:'1.5rem'}}>
+        <h3 className="card-title">Patient Profile</h3>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:'1rem'}}>
+          {[['👤 Name',user.name],['📧 Email',user.email],['🩸 Blood Group',user.bloodGroup||'—'],['🎂 Date of Birth',user.dob?new Date(user.dob).toLocaleDateString():'—'],['⚥ Gender',user.gender||'—'],['📞 Phone',user.phone||'—'],['🚨 Emergency',user.emergencyContact||'—']].map(([l,v],i)=>(
+            <div key={i} style={{padding:'10px 14px',background:'var(--accent)',borderRadius:10}}>
+              <div style={{fontSize:'0.75rem',color:'var(--text-muted)',marginBottom:3}}>{l}</div>
+              <div style={{fontSize:'0.875rem',fontWeight:500,color:'var(--text)'}}>{v}</div>
+            </div>
+          ))}
+        </div>
+        {user.medicalHistory&&<div style={{marginTop:'1rem',padding:'12px 16px',background:'var(--accent)',borderRadius:10}}>
+          <div style={{fontSize:'0.75rem',color:'var(--text-muted)',marginBottom:4}}>📋 Medical History</div>
+          <div style={{fontSize:'0.875rem',color:'var(--text)',lineHeight:1.6}}>{user.medicalHistory}</div>
+        </div>}
+      </div>
+    </div>
+  );
+}
+
+function MedicationTracker({user}) {
+  const uid=user?.id||'guest';
+  const [meds,setMeds]=useState(DB.getMeds(uid));
+  const [form,setForm]=useState({medicationName:'',dosage:'',time:'08:00',date:new Date().toISOString().split('T')[0]});
+  const [showForm,setShowForm]=useState(false);
+  const [success,setSuccess]=useState('');
+  const [filter,setFilter]=useState('all');
+  const ch=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
+  const save=()=>{
+    if(!form.medicationName||!form.dosage)return;
+    const updated=[...meds,{...form,id:Date.now().toString(),takenStatus:false}];
+    DB.saveMeds(uid,updated);setMeds(updated);
+    setForm({medicationName:'',dosage:'',time:'08:00',date:new Date().toISOString().split('T')[0]});
+    setShowForm(false);setSuccess('Medication added!');setTimeout(()=>setSuccess(''),2500);
+  };
+  const toggle=id=>{const u=meds.map(m=>m.id===id?{...m,takenStatus:!m.takenStatus}:m);DB.saveMeds(uid,u);setMeds(u)};
+  const del=id=>{const u=meds.filter(m=>m.id!==id);DB.saveMeds(uid,u);setMeds(u)};
+  const today=new Date().toISOString().split('T')[0];
+  const filtered=filter==='today'?meds.filter(m=>m.date===today):filter==='taken'?meds.filter(m=>m.takenStatus):filter==='pending'?meds.filter(m=>!m.takenStatus):meds;
+  const takenToday=meds.filter(m=>m.date===today&&m.takenStatus).length;
+  const totalToday=meds.filter(m=>m.date===today).length;
+  return (
+    <div className="page fade-in">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'2rem',flexWrap:'wrap',gap:'1rem'}}>
+        <div><h1 className="section-title">💊 Medication Tracker</h1><p className="section-sub">Manage and track your daily medications</p></div>
+        <button className="btn btn-primary" onClick={()=>setShowForm(!showForm)}>+ Add Medication</button>
+      </div>
+      {success&&<div className="alert alert-success">✓ {success}</div>}
+      <div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem',flexWrap:'wrap'}}>
+        {[{l:'Total',v:meds.length,c:'var(--primary)'},{l:"Today's",v:totalToday,c:'var(--secondary)'},{l:'Taken',v:takenToday,c:'#2ecc8a'},{l:'Pending',v:totalToday-takenToday,c:'var(--warning)'}].map((s,i)=>(
+          <div key={i} style={{flex:'1 0 110px',background:'var(--white)',border:'1.5px solid var(--border)',borderRadius:12,padding:'1rem',textAlign:'center'}}>
+            <div style={{fontSize:'1.6rem',fontWeight:700,color:s.c}}>{s.v}</div>
+            <div style={{fontSize:'0.775rem',color:'var(--text-muted)'}}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+      {showForm&&(
+        <div className="card slide-in" style={{marginBottom:'1.5rem',border:'2px solid var(--primary-light)'}}>
+          <h3 className="card-title">Add New Medication</h3>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Medication Name *</label><input className="form-input" value={form.medicationName} onChange={ch('medicationName')} placeholder="e.g. Hydroxyurea"/></div>
+            <div className="form-group"><label className="form-label">Dosage *</label><input className="form-input" value={form.dosage} onChange={ch('dosage')} placeholder="e.g. 500mg"/></div>
+          </div>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Time</label><input className="form-input" type="time" value={form.time} onChange={ch('time')}/></div>
+            <div className="form-group"><label className="form-label">Date</label><input className="form-input" type="date" value={form.date} onChange={ch('date')}/></div>
+          </div>
+          <div style={{display:'flex',gap:'8px'}}>
+            <button className="btn btn-primary" onClick={save}>Save Medication</button>
+            <button className="btn btn-outline" onClick={()=>setShowForm(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+      <div style={{display:'flex',gap:'8px',marginBottom:'1rem',flexWrap:'wrap'}}>
+        {['all','today','taken','pending'].map(f=>(
+          <button key={f} onClick={()=>setFilter(f)} className={`btn btn-sm ${filter===f?'btn-primary':'btn-outline'}`} style={{textTransform:'capitalize'}}>
+            {f==='all'?'All':f==='today'?"Today's":f}
+          </button>
+        ))}
+      </div>
+      <div className="card" style={{padding:0,overflow:'hidden'}}>
+        {filtered.length===0?(
+          <div className="empty"><div className="empty-icon">💊</div><p>No medications found</p></div>
+        ):(
+          <div className="table-wrap">
+            <table className="table">
+              <thead><tr><th>Status</th><th>Medication</th><th>Dosage</th><th>Time</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody>
+                {filtered.map(m=>(
+                  <tr key={m.id}>
+                    <td><span className={`badge ${m.takenStatus?'badge-green':'badge-orange'}`}>{m.takenStatus?'✓ Taken':'⏰ Pending'}</span></td>
+                    <td style={{fontWeight:500}} className={m.takenStatus?'med-taken':''}>{m.medicationName}</td>
+                    <td><span className="badge badge-blue">{m.dosage}</span></td>
+                    <td style={{color:'var(--text-muted)'}}>{m.time}</td>
+                    <td style={{color:'var(--text-muted)',fontSize:'0.825rem'}}>{new Date(m.date+'T00:00:00').toLocaleDateString()}</td>
+                    <td>
+                      <div style={{display:'flex',gap:6}}>
+                        <button className={`btn btn-sm ${m.takenStatus?'btn-outline':'btn-secondary'}`} onClick={()=>toggle(m.id)}>{m.takenStatus?'Undo':'✓ Taken'}</button>
+                        <button className="btn btn-danger btn-sm" onClick={()=>del(m.id)}>🗑</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+      <div className="card" style={{marginTop:'1.5rem'}}>
+        <h3 className="card-title">Common SCD Medications</h3>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'1rem'}}>
+          {[{name:'Hydroxyurea',use:'Reduces painful crises, increases HbF',icon:'💊'},{name:'Folic Acid',use:'Supports red blood cell production',icon:'🌿'},{name:'Penicillin V',use:'Prevents bacterial infections',icon:'💉'},{name:'Pain Relievers',use:'NSAIDs or opioids for pain crises',icon:'🩺'}].map((m,i)=>(
+            <div key={i} style={{padding:'12px',background:'var(--accent)',borderRadius:10,display:'flex',gap:10,alignItems:'flex-start'}}>
+              <span style={{fontSize:20}}>{m.icon}</span>
+              <div><div style={{fontWeight:600,fontSize:'0.875rem'}}>{m.name}</div><div style={{fontSize:'0.775rem',color:'var(--text-muted)',marginTop:2}}>{m.use}</div></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SymptomMonitor({user}) {
+  const uid=user?.id||'guest';
+  const [syms,setSyms]=useState(DB.getSymps(uid));
+  const [form,setForm]=useState({painLevel:3,fatigueLevel:3,temperature:'37.0',hydrationLevel:3,mood:'Fair',notes:''});
+  const [showForm,setShowForm]=useState(false);
+  const [success,setSuccess]=useState('');
+  const chartRef=useRef(null);
+  const chartInst=useRef(null);
+  const ch=k=>v=>setForm(f=>({...f,[k]:v}));
+  const save=()=>{
+    const entry={...form,id:Date.now().toString(),createdAt:new Date().toISOString()};
+    const updated=[...syms,entry];
+    DB.saveSymps(uid,updated);setSyms(updated);
+    setForm({painLevel:3,fatigueLevel:3,temperature:'37.0',hydrationLevel:3,mood:'Fair',notes:''});
+    setShowForm(false);setSuccess('Symptoms logged!');setTimeout(()=>setSuccess(''),2500);
+  };
+  useEffect(()=>{
+    if(!chartRef.current)return;
+    if(chartInst.current)chartInst.current.destroy();
+    const last7=syms.slice(-7);
+    if(last7.length===0)return;
+    chartInst.current=new Chart(chartRef.current,{
+      type:'line',
+      data:{
+        labels:last7.map(s=>new Date(s.createdAt).toLocaleDateString('en',{month:'short',day:'numeric'})),
+        datasets:[
+          {label:'Pain Level',data:last7.map(s=>s.painLevel),borderColor:'#e05252',backgroundColor:'rgba(224,82,82,0.08)',tension:0.4,fill:true,pointRadius:5,pointBackgroundColor:'#e05252'},
+          {label:'Fatigue',data:last7.map(s=>s.fatigueLevel),borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,0.08)',tension:0.4,fill:true,pointRadius:5,pointBackgroundColor:'#f5a623'},
+          {label:'Hydration ×2',data:last7.map(s=>s.hydrationLevel*2),borderColor:'#1a6fa3',backgroundColor:'rgba(26,111,163,0.08)',tension:0.4,fill:true,pointRadius:5,pointBackgroundColor:'#1a6fa3'},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},tooltip:{mode:'index',intersect:false}},scales:{y:{min:0,max:10,grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#6b7a90'}},x:{grid:{display:false},ticks:{color:'#6b7a90'}}}}
+    });
+  },[syms,showForm]);
+  const pc=v=>v<=3?'#2ecc8a':v<=6?'#f5a623':'#e05252';
+  const pl=v=>v<=3?'Mild':v<=6?'Moderate':'Severe';
+  return (
+    <div className="page fade-in">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'2rem',flexWrap:'wrap',gap:'1rem'}}>
+        <div><h1 className="section-title">📊 Symptom Monitor</h1><p className="section-sub">Track and visualize your health trends over time</p></div>
+        <button className="btn btn-primary" onClick={()=>setShowForm(!showForm)}>+ Log Symptoms</button>
+      </div>
+      {success&&<div className="alert alert-success">✓ {success}</div>}
+      {showForm&&(
+        <div className="card slide-in" style={{marginBottom:'1.5rem',border:'2px solid var(--primary-light)'}}>
+          <h3 className="card-title">Log Today's Symptoms</h3>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'1.25rem'}}>
+            {[{key:'painLevel',label:'Pain Level',min:1,max:10,icon:'🩸'},{key:'fatigueLevel',label:'Fatigue Level',min:1,max:10,icon:'😴'},{key:'hydrationLevel',label:'Hydration Level',min:1,max:5,icon:'💧'}].map(item=>(
+              <div key={item.key} style={{padding:'14px',background:'var(--accent)',borderRadius:12}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.5rem'}}>
+                  <label className="form-label" style={{margin:0}}>{item.icon} {item.label}</label>
+                  <span style={{fontWeight:700,fontSize:'1.1rem',color:pc(form[item.key])}}>
+                    {form[item.key]} <span style={{fontSize:'0.75rem'}}>{item.key==='painLevel'?`(${pl(form[item.key])})`:` / ${item.max}`}</span>
+                  </span>
+                </div>
+                <input type="range" min={item.min} max={item.max} value={form[item.key]} onChange={e=>ch(item.key)(parseInt(e.target.value))}/>
+                <div className="range-labels"><span>{item.min}</span><span>{item.max}</span></div>
+              </div>
+            ))}
+          </div>
+          <div className="form-row" style={{marginTop:'1rem'}}>
+            <div className="form-group"><label className="form-label">🌡 Temperature (°C)</label><input className="form-input" type="number" step="0.1" value={form.temperature} onChange={e=>ch('temperature')(e.target.value)} placeholder="37.0"/></div>
+            <div className="form-group"><label className="form-label">😊 Mood</label>
+              <select className="form-input" value={form.mood} onChange={e=>ch('mood')(e.target.value)}>
+                {['Excellent','Good','Fair','Poor','Very Poor'].map(m=><option key={m}>{m}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="form-group"><label className="form-label">📝 Additional Notes</label><textarea className="form-input" value={form.notes} onChange={e=>ch('notes')(e.target.value)} placeholder="Any observations, triggers, or additional details..."/></div>
+          <div style={{display:'flex',gap:'8px'}}><button className="btn btn-primary" onClick={save}>Save Entry</button><button className="btn btn-outline" onClick={()=>setShowForm(false)}>Cancel</button></div>
+        </div>
+      )}
+      {syms.length>0&&(
+        <div className="card" style={{marginBottom:'1.5rem'}}>
+          <h3 className="card-title">Symptom Trends – Last 7 Entries</h3>
+          <div style={{height:300,position:'relative'}}><canvas ref={chartRef}></canvas></div>
+        </div>
+      )}
+      <div className="card" style={{padding:0,overflow:'hidden'}}>
+        <div style={{padding:'1.25rem 1.5rem',borderBottom:'1px solid var(--border)'}}><h3 className="card-title" style={{margin:0}}>Symptom History</h3></div>
+        {syms.length===0?(
+          <div className="empty"><div className="empty-icon">📊</div><p>No symptoms logged yet. Start tracking your health!</p></div>
+        ):(
+          <div className="table-wrap">
+            <table className="table">
+              <thead><tr><th>Date</th><th>Pain</th><th>Fatigue</th><th>Temp</th><th>Hydration</th><th>Mood</th><th>Notes</th></tr></thead>
+              <tbody>
+                {[...syms].reverse().map(s=>(
+                  <tr key={s.id}>
+                    <td style={{whiteSpace:'nowrap',fontSize:'0.825rem'}}>{new Date(s.createdAt).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}</td>
+                    <td><span className="badge" style={{background:pc(s.painLevel)+'22',color:pc(s.painLevel)}}>{s.painLevel}/10</span></td>
+                    <td><span className="badge" style={{background:pc(s.fatigueLevel)+'22',color:pc(s.fatigueLevel)}}>{s.fatigueLevel}/10</span></td>
+                    <td style={{color:parseFloat(s.temperature)>38.5?'var(--danger)':'var(--text)'}}>{s.temperature}°</td>
+                    <td><span className="badge badge-blue">{s.hydrationLevel}/5</span></td>
+                    <td><span className="badge badge-gray">{s.mood}</span></td>
+                    <td style={{fontSize:'0.8rem',color:'var(--text-muted)',maxWidth:160,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{s.notes||'—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+      <div className="card" style={{marginTop:'1.5rem'}}>
+        <h3 className="card-title">⚠️ Common SCD Crisis Triggers</h3>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:'0.75rem'}}>
+          {[{i:'❄️',l:'Extreme Cold'},{i:'🔥',l:'Extreme Heat'},{i:'😰',l:'Dehydration'},{i:'😵',l:'Stress'},{i:'🤒',l:'Infection'},{i:'🛫',l:'High Altitude'},{i:'😴',l:'Lack of Sleep'},{i:'🚬',l:'Smoking/Alcohol'}].map((t,i)=>(
+            <div key={i} style={{padding:'10px 12px',background:'#fff8e6',border:'1px solid #fde8a0',borderRadius:10,display:'flex',alignItems:'center',gap:8,fontSize:'0.825rem'}}>
+              <span>{t.i}</span><span style={{color:'#b07a10',fontWeight:500}}>{t.l}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChatbotPage() {
+  const [msgs,setMsgs]=useState([{role:'assistant',content:"Hello! I'm SicklerAI 🩺 — your dedicated sickle cell health assistant. I can help you understand your condition, medications, pain management, and lifestyle tips. What would you like to know?"}]);
+  const [inp,setInp]=useState('');
+  const [loading,setLoading]=useState(false);
+  const endRef=useRef(null);
+  useEffect(()=>{endRef.current?.scrollIntoView({behavior:'smooth'})},[msgs]);
+  const send=async()=>{
+    if(!inp.trim()||loading)return;
+    const m=inp.trim();setInp('');
+    setMsgs(p=>[...p,{role:'user',content:m}]);
+    setLoading(true);
+    const r=await aiChat(m,msgs);
+    setMsgs(p=>[...p,{role:'assistant',content:r}]);
+    setLoading(false);
+  };
+  const quick=["What causes a pain crisis?","How much water should I drink daily?","What is Hydroxyurea used for?","How to manage SCD fatigue?","What foods are good for sickle cell?","When should I go to the ER?","What are my vaccination needs?","How does cold weather affect SCD?"];
+  return (
+    <div className="page fade-in">
+      <h1 className="section-title">🤖 AI Health Assistant</h1>
+      <p className="section-sub">Ask SicklerAI anything about sickle cell disease management</p>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 280px',gap:'1.5rem',alignItems:'start'}}>
+        <div className="card" style={{padding:0,display:'flex',flexDirection:'column',height:560}}>
+          <div style={{padding:'14px 18px',background:'linear-gradient(135deg,var(--primary),#1e85c3)',color:'white',display:'flex',alignItems:'center',gap:12,borderRadius:'var(--radius-lg) var(--radius-lg) 0 0'}}>
+            <div style={{width:40,height:40,background:'rgba(255,255,255,0.2)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🩺</div>
+            <div><div style={{fontWeight:600}}>SicklerAI</div><div style={{fontSize:'0.78rem',opacity:0.8}}>Powered by Claude · SCD Specialist</div></div>
+            <div style={{marginLeft:'auto',width:8,height:8,background:'#6ee8b4',borderRadius:'50%'}}></div>
+          </div>
+          <div style={{flex:1,overflowY:'auto',padding:'16px',display:'flex',flexDirection:'column',gap:12}}>
+            {msgs.map((m,i)=>(
+              <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start',justifyContent:m.role==='user'?'flex-end':'flex-start'}}>
+                {m.role==='assistant'&&<div style={{width:32,height:32,background:'var(--primary-light)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,flexShrink:0}}>🩺</div>}
+                <div style={{maxWidth:'78%',padding:'10px 14px',borderRadius:14,background:m.role==='assistant'?'var(--accent)':'var(--primary)',color:m.role==='assistant'?'var(--text)':'white',fontSize:'0.875rem',lineHeight:1.6,borderBottomLeftRadius:m.role==='assistant'?4:14,borderBottomRightRadius:m.role==='user'?4:14}}>
+                  {m.content}
+                </div>
+              </div>
+            ))}
+            {loading&&(
+              <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+                <div style={{width:32,height:32,background:'var(--primary-light)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14}}>🩺</div>
+                <div style={{background:'var(--accent)',padding:'12px 16px',borderRadius:14,borderBottomLeftRadius:4}}>
+                  <div style={{display:'flex',gap:5,alignItems:'center'}}><span className="dot"/><span className="dot"/><span className="dot"/></div>
+                </div>
+              </div>
+            )}
+            <div ref={endRef}/>
+          </div>
+          <div style={{padding:'12px',borderTop:'1px solid var(--border)',display:'flex',gap:8}}>
+            <input className="form-input" style={{borderRadius:24}} value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Ask about sickle cell care, medications, pain management..."/>
+            <button className="btn btn-primary" onClick={send} disabled={loading||!inp.trim()}>
+              {loading?<span className="spinner"/>:'➤'}
+            </button>
+          </div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+          <div className="card">
+            <h4 style={{fontWeight:600,fontSize:'0.9rem',marginBottom:'0.75rem',color:'var(--text-muted)'}}>💬 Quick Questions</h4>
+            {quick.map((q,i)=>(
+              <button key={i} onClick={()=>setInp(q)} style={{display:'block',width:'100%',textAlign:'left',padding:'8px 12px',background:'var(--accent)',border:'1px solid var(--border)',borderRadius:8,cursor:'pointer',fontSize:'0.8rem',color:'var(--text)',marginBottom:6,transition:'all 0.15s',fontFamily:'DM Sans,sans-serif'}}
+                onMouseOver={e=>e.currentTarget.style.background='var(--primary-light)'}
+                onMouseOut={e=>e.currentTarget.style.background='var(--accent)'}>
+                {q}
+              </button>
+            ))}
+          </div>
+          <div className="alert alert-info">
+            <strong style={{display:'block',marginBottom:4}}>⚕️ Disclaimer</strong>
+            SicklerAI provides general health information. Always consult your healthcare provider for medical decisions and emergencies.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AppointmentBooking({user, setPage}) {
+  const uid=user?.id||'guest';
+  const DOCTORS=[
+    {id:'d1',name:'Dr. Amara Osei',specialty:'Hematologist',hospital:'City Medical Center',rating:4.9,available:['Mon','Wed','Fri'],slots:['09:00','10:00','11:00','14:00','15:00','16:00'],img:'AO',color:'#1a6fa3'},
+    {id:'d2',name:'Dr. Sarah Mitchell',specialty:'Sickle Cell Specialist',hospital:'St. Luke\'s Hospital',rating:5.0,available:['Tue','Thu','Sat'],slots:['08:30','09:30','11:00','13:00','14:30','16:00'],img:'SM',color:'#2ecc8a'},
+    {id:'d3',name:'Dr. James Adeyemi',specialty:'Pediatric Hematologist',hospital:'Children\'s Health Clinic',rating:4.8,available:['Mon','Tue','Thu','Fri'],slots:['09:00','10:30','12:00','14:00','15:30'],img:'JA',color:'#7c5cbf'},
+    {id:'d4',name:'Dr. Priya Nair',specialty:'Internal Medicine & SCD',hospital:'Sunrise Healthcare',rating:4.7,available:['Mon','Wed','Thu','Fri'],slots:['08:00','09:00','10:30','13:30','15:00','16:30'],img:'PN',color:'#e05252'},
+    {id:'d5',name:'Dr. Michael Chen',specialty:'Pain Management',hospital:'Advanced Pain Clinic',rating:4.8,available:['Tue','Wed','Fri'],slots:['09:30','11:00','13:00','14:30','16:00'],img:'MC',color:'#f5a623'},
+    {id:'d6',name:'Dr. Fatima Al-Hassan',specialty:'Transfusion Medicine',hospital:'Regional Blood Center',rating:4.9,available:['Mon','Thu','Fri'],slots:['08:00','09:30','11:30','13:00','14:00'],img:'FA',color:'#0d9e75'},
+  ];
+  const [appts,setAppts]=useState(DB.getAppts(uid));
+  const [view,setView]=useState('book'); // book | upcoming | history
+  const [step,setStep]=useState(1); // 1=select doctor, 2=pick date/time, 3=details, 4=confirm
+  const [selected,setSelected]=useState({doctor:null,date:'',time:'',visitType:'In-Person',reason:'',notes:'',urgency:'Routine'});
+  const [success,setSuccess]=useState('');
+  const [cancelId,setCancelId]=useState(null);
+
+  const today=new Date().toISOString().split('T')[0];
+  const minDate=today;
+  const maxDate=new Date(Date.now()+90*86400000).toISOString().split('T')[0];
+
+  const book=()=>{
+    const appt={
+      id:Date.now().toString(),
+      doctorId:selected.doctor.id,
+      doctorName:selected.doctor.name,
+      specialty:selected.doctor.specialty,
+      hospital:selected.doctor.hospital,
+      date:selected.date,time:selected.time,
+      visitType:selected.visitType,
+      reason:selected.reason,
+      notes:selected.notes,
+      urgency:selected.urgency,
+      status:'confirmed',
+      bookedAt:new Date().toISOString()
+    };
+    const updated=[...appts,appt];
+    DB.saveAppts(uid,updated);setAppts(updated);
+    setSuccess('Appointment booked successfully!');
+    setStep(1);
+    setSelected({doctor:null,date:'',time:'',visitType:'In-Person',reason:'',notes:'',urgency:'Routine'});
+    setTimeout(()=>{setView('upcoming');setSuccess('');},1500);
+  };
+
+  const cancel=id=>{
+    const updated=appts.map(a=>a.id===id?{...a,status:'cancelled'}:a);
+    DB.saveAppts(uid,updated);setAppts(updated);setCancelId(null);
+  };
+
+  const now=new Date();
+  const upcoming=appts.filter(a=>new Date(a.date+'T'+a.time)>=now&&a.status!=='cancelled').sort((a,b)=>new Date(a.date+'T'+a.time)-new Date(b.date+'T'+b.time));
+  const past=appts.filter(a=>new Date(a.date+'T'+a.time)<now||a.status==='cancelled').sort((a,b)=>new Date(b.date+'T'+b.time)-new Date(a.date+'T'+a.time));
+
+  const daysUntil=d=>{const diff=Math.ceil((new Date(d+'T12:00:00')-now)/(86400000));return diff===0?'Today':diff===1?'Tomorrow':`In ${diff} days`;};
+
+  return (
+    <div className="page fade-in">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'2rem',flexWrap:'wrap',gap:'1rem'}}>
+        <div>
+          <h1 className="section-title">📅 Appointment Booking</h1>
+          <p className="section-sub">Schedule visits with your sickle cell care team</p>
+        </div>
+        <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+          {[{k:'book',l:'+ Book Appointment'},{k:'upcoming',l:`Upcoming (${upcoming.length})`},{k:'history',l:'History'}].map(t=>(
+            <button key={t.k} onClick={()=>{setView(t.k);setStep(1);}} className={`btn btn-sm ${view===t.k?'btn-primary':'btn-outline'}`}>{t.l}</button>
+          ))}
+        </div>
+      </div>
+
+      {success&&<div className="alert alert-success">✅ {success}</div>}
+
+      {/* ====== BOOKING FLOW ====== */}
+      {view==='book'&&(
+        <div>
+          {/* Step indicator */}
+          <div style={{display:'flex',alignItems:'center',gap:0,marginBottom:'2rem',overflowX:'auto',paddingBottom:4}}>
+            {[{n:1,l:'Choose Doctor'},{n:2,l:'Date & Time'},{n:3,l:'Visit Details'},{n:4,l:'Confirm'}].map((s,i,arr)=>(
+              <React.Fragment key={s.n}>
+                <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,minWidth:80}}>
+                  <div style={{width:34,height:34,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.875rem',background:step>s.n?'var(--secondary)':step===s.n?'var(--primary)':'var(--border)',color:step>=s.n?'white':'var(--text-muted)',transition:'all 0.3s'}}>
+                    {step>s.n?'✓':s.n}
+                  </div>
+                  <div style={{fontSize:'0.72rem',fontWeight:step===s.n?600:400,color:step===s.n?'var(--primary)':'var(--text-muted)',whiteSpace:'nowrap'}}>{s.l}</div>
+                </div>
+                {i<arr.length-1&&<div style={{flex:1,height:2,background:step>s.n?'var(--secondary)':'var(--border)',minWidth:20,margin:'0 4px',marginBottom:18,transition:'background 0.3s'}}/>}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* STEP 1: Select Doctor */}
+          {step===1&&(
+            <div className="slide-in">
+              <div className="alert alert-info" style={{marginBottom:'1.5rem'}}>🩺 All doctors listed are specialists experienced in sickle cell disease management.</div>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:'1.25rem'}}>
+                {DOCTORS.map(doc=>(
+                  <div key={doc.id} onClick={()=>{setSelected(s=>({...s,doctor:doc}));setStep(2);}}
+                    style={{background:'var(--white)',border:`2px solid ${selected.doctor?.id===doc.id?doc.color:'var(--border)'}`,borderRadius:16,padding:'1.25rem',cursor:'pointer',transition:'all 0.2s'}}
+                    onMouseOver={e=>e.currentTarget.style.boxShadow='0 6px 20px rgba(26,111,163,0.12)'}
+                    onMouseOut={e=>e.currentTarget.style.boxShadow='none'}>
+                    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:'0.875rem'}}>
+                      <div style={{width:50,height:50,borderRadius:'50%',background:doc.color+'22',border:`2px solid ${doc.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.9rem',color:doc.color,flexShrink:0}}>{doc.img}</div>
+                      <div>
+                        <div style={{fontWeight:700,fontSize:'0.95rem',color:'var(--text)'}}>{doc.name}</div>
+                        <div style={{fontSize:'0.78rem',color:'var(--text-muted)'}}>{doc.specialty}</div>
+                      </div>
+                      <div style={{marginLeft:'auto',textAlign:'right'}}>
+                        <div style={{fontSize:'0.85rem',fontWeight:600,color:'#f5a623'}}>★ {doc.rating}</div>
+                      </div>
+                    </div>
+                    <div style={{fontSize:'0.8rem',color:'var(--text-muted)',display:'flex',alignItems:'center',gap:6,marginBottom:8}}>
+                      🏥 {doc.hospital}
+                    </div>
+                    <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+                      {doc.available.map(d=><span key={d} className="badge badge-blue" style={{fontSize:'0.7rem'}}>{d}</span>)}
+                    </div>
+                    <div style={{marginTop:'0.875rem',paddingTop:'0.75rem',borderTop:'1px solid var(--border)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                      <span style={{fontSize:'0.78rem',color:'var(--secondary)',fontWeight:500}}>✓ Available this week</span>
+                      <button className="btn btn-primary btn-sm" onClick={e=>{e.stopPropagation();setSelected(s=>({...s,doctor:doc}));setStep(2);}}>Book →</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: Date & Time */}
+          {step===2&&selected.doctor&&(
+            <div className="slide-in">
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:'1.5rem',padding:'14px 18px',background:'var(--primary-light)',borderRadius:12}}>
+                <div style={{width:42,height:42,borderRadius:'50%',background:selected.doctor.color+'22',border:`2px solid ${selected.doctor.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.85rem',color:selected.doctor.color}}>{selected.doctor.img}</div>
+                <div>
+                  <div style={{fontWeight:600}}>{selected.doctor.name}</div>
+                  <div style={{fontSize:'0.8rem',color:'var(--text-muted)'}}>{selected.doctor.specialty} · {selected.doctor.hospital}</div>
+                </div>
+                <button className="btn btn-outline btn-sm" style={{marginLeft:'auto'}} onClick={()=>{setStep(1);setSelected(s=>({...s,date:'',time:''}))}}>Change Doctor</button>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
+                <div className="card">
+                  <h4 style={{fontWeight:600,marginBottom:'1rem',color:'var(--text)'}}>📅 Select Date</h4>
+                  <div className="form-group">
+                    <label className="form-label">Appointment Date</label>
+                    <input className="form-input" type="date" min={minDate} max={maxDate} value={selected.date} onChange={e=>setSelected(s=>({...s,date:e.target.value,time:''}))}/>
+                  </div>
+                  {selected.date&&(
+                    <div style={{padding:'10px 14px',background:'var(--secondary-light)',borderRadius:9,fontSize:'0.85rem',color:'#1a7a54',fontWeight:500}}>
+                      📆 {new Date(selected.date+'T12:00:00').toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'})} · {daysUntil(selected.date)}
+                    </div>
+                  )}
+                  <div style={{marginTop:'1rem',padding:'10px 14px',background:'var(--accent)',borderRadius:9,fontSize:'0.78rem',color:'var(--text-muted)'}}>
+                    <strong>Available days:</strong> {selected.doctor.available.join(', ')}
+                  </div>
+                </div>
+                <div className="card">
+                  <h4 style={{fontWeight:600,marginBottom:'1rem',color:'var(--text)'}}>⏰ Select Time Slot</h4>
+                  {!selected.date?(
+                    <div style={{color:'var(--text-muted)',fontSize:'0.875rem',padding:'1rem 0',textAlign:'center'}}>Please select a date first</div>
+                  ):(
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'8px'}}>
+                      {selected.doctor.slots.map(slot=>(
+                        <button key={slot} onClick={()=>setSelected(s=>({...s,time:slot}))}
+                          style={{padding:'8px',borderRadius:8,border:`1.5px solid ${selected.time===slot?'var(--primary)':'var(--border)'}`,background:selected.time===slot?'var(--primary)':'var(--white)',color:selected.time===slot?'white':'var(--text)',cursor:'pointer',fontSize:'0.82rem',fontWeight:selected.time===slot?600:400,transition:'all 0.15s',fontFamily:'DM Sans,sans-serif'}}>
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div style={{display:'flex',gap:'10px',marginTop:'1.5rem'}}>
+                <button className="btn btn-outline" onClick={()=>setStep(1)}>← Back</button>
+                <button className="btn btn-primary" disabled={!selected.date||!selected.time} onClick={()=>setStep(3)}>Continue → </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: Visit Details */}
+          {step===3&&(
+            <div className="slide-in">
+              <div className="card">
+                <h3 className="card-title">Visit Details</h3>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Visit Type</label>
+                    <select className="form-input" value={selected.visitType} onChange={e=>setSelected(s=>({...s,visitType:e.target.value}))}>
+                      {['In-Person','Telemedicine / Video Call','Phone Consultation'].map(t=><option key={t}>{t}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Urgency Level</label>
+                    <select className="form-input" value={selected.urgency} onChange={e=>setSelected(s=>({...s,urgency:e.target.value}))}>
+                      {['Routine','Follow-Up','Urgent','Emergency Follow-Up'].map(u=><option key={u}>{u}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Primary Reason for Visit *</label>
+                  <select className="form-input" value={selected.reason} onChange={e=>setSelected(s=>({...s,reason:e.target.value}))}>
+                    <option value="">Select reason...</option>
+                    {['Routine Check-Up','Pain Crisis Management','Medication Review','Blood Transfusion Follow-Up','Hydroxyurea Monitoring','Infection / Fever','Fatigue / Anemia','Stroke Risk Assessment','New Symptoms','Lab Results Review','Vaccination','Mental Health Support','Other'].map(r=><option key={r}>{r}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Additional Notes / Symptoms</label>
+                  <textarea className="form-input" style={{minHeight:90}} value={selected.notes} onChange={e=>setSelected(s=>({...s,notes:e.target.value}))} placeholder="Describe current symptoms, recent changes, or anything the doctor should know..."/>
+                </div>
+                <div style={{padding:'12px 16px',background:'#fff8e6',border:'1px solid #fde8a0',borderRadius:9,fontSize:'0.82rem',color:'#b07a10',marginBottom:'1rem'}}>
+                  ⚠️ For pain crises or emergencies, please go to the nearest emergency room or call 911 immediately.
+                </div>
+                <div style={{display:'flex',gap:'10px'}}>
+                  <button className="btn btn-outline" onClick={()=>setStep(2)}>← Back</button>
+                  <button className="btn btn-primary" disabled={!selected.reason} onClick={()=>setStep(4)}>Review Booking →</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: Confirm */}
+          {step===4&&(
+            <div className="slide-in">
+              <div className="card" style={{border:'2px solid var(--secondary)',maxWidth:560,margin:'0 auto'}}>
+                <div style={{textAlign:'center',marginBottom:'1.5rem'}}>
+                  <div style={{fontSize:'2.5rem',marginBottom:'0.5rem'}}>📋</div>
+                  <h3 style={{fontFamily:'Playfair Display,serif',fontSize:'1.3rem',fontWeight:700}}>Confirm Your Appointment</h3>
+                  <p style={{color:'var(--text-muted)',fontSize:'0.875rem'}}>Please review the details below</p>
+                </div>
+                <div style={{display:'flex',flexDirection:'column',gap:'10px',marginBottom:'1.5rem'}}>
+                  {[
+                    {l:'Doctor',v:selected.doctor?.name,icon:'👨‍⚕️'},
+                    {l:'Specialty',v:selected.doctor?.specialty,icon:'🏥'},
+                    {l:'Hospital',v:selected.doctor?.hospital,icon:'🏢'},
+                    {l:'Date',v:new Date(selected.date+'T12:00:00').toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+' · '+daysUntil(selected.date),icon:'📅'},
+                    {l:'Time',v:selected.time,icon:'⏰'},
+                    {l:'Visit Type',v:selected.visitType,icon:'🖥'},
+                    {l:'Urgency',v:selected.urgency,icon:'🚦'},
+                    {l:'Reason',v:selected.reason,icon:'📝'},
+                  ].map((item,i)=>(
+                    <div key={i} style={{display:'flex',gap:12,padding:'10px 14px',background:'var(--accent)',borderRadius:9,alignItems:'flex-start'}}>
+                      <span style={{fontSize:16,flexShrink:0}}>{item.icon}</span>
+                      <div>
+                        <div style={{fontSize:'0.75rem',color:'var(--text-muted)'}}>{item.l}</div>
+                        <div style={{fontWeight:500,fontSize:'0.875rem',color:'var(--text)'}}>{item.v}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {selected.notes&&(
+                    <div style={{padding:'10px 14px',background:'var(--accent)',borderRadius:9}}>
+                      <div style={{fontSize:'0.75rem',color:'var(--text-muted)',marginBottom:3}}>📄 Notes</div>
+                      <div style={{fontSize:'0.85rem',color:'var(--text)'}}>{selected.notes}</div>
+                    </div>
+                  )}
+                </div>
+                <div style={{display:'flex',gap:'10px'}}>
+                  <button className="btn btn-outline" style={{flex:1,justifyContent:'center'}} onClick={()=>setStep(3)}>← Edit</button>
+                  <button className="btn btn-secondary" style={{flex:2,justifyContent:'center'}} onClick={book}>✅ Confirm Booking</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ====== UPCOMING APPOINTMENTS ====== */}
+      {view==='upcoming'&&(
+        <div className="slide-in">
+          {upcoming.length===0?(
+            <div className="empty">
+              <div className="empty-icon">📅</div>
+              <p>No upcoming appointments</p>
+              <button className="btn btn-primary" style={{marginTop:'1rem'}} onClick={()=>setView('book')}>Book an Appointment</button>
+            </div>
+          ):(
+            <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+              {upcoming.map(a=>{
+                const apptDate=new Date(a.date+'T'+a.time);
+                const doc=DOCTORS.find(d=>d.id===a.doctorId)||{color:'var(--primary)',img:a.doctorName.split(' ').map(w=>w[0]).join('').slice(0,2)};
+                return (
+                  <div key={a.id} className="card" style={{border:`1.5px solid ${doc.color}33`}}>
+                    <div style={{display:'flex',alignItems:'flex-start',gap:16,flexWrap:'wrap'}}>
+                      <div style={{width:56,height:56,borderRadius:14,background:doc.color+'18',border:`2px solid ${doc.color}44`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                        <div style={{fontSize:'0.6rem',color:doc.color,fontWeight:600,textTransform:'uppercase'}}>{apptDate.toLocaleDateString('en',{month:'short'})}</div>
+                        <div style={{fontSize:'1.3rem',fontWeight:800,color:doc.color,lineHeight:1}}>{apptDate.getDate()}</div>
+                      </div>
+                      <div style={{flex:1,minWidth:200}}>
+                        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4,flexWrap:'wrap'}}>
+                          <span style={{fontWeight:700,fontSize:'1rem'}}>{a.doctorName}</span>
+                          <span className={`badge ${a.status==='confirmed'?'badge-green':'badge-blue'}`}>{a.status==='confirmed'?'✓ Confirmed':'🔄 '+a.status}</span>
+                          <span className="badge badge-gray">{a.visitType}</span>
+                        </div>
+                        <div style={{fontSize:'0.82rem',color:'var(--text-muted)',marginBottom:3}}>🏥 {a.specialty} · {a.hospital}</div>
+                        <div style={{fontSize:'0.82rem',color:'var(--text-muted)',marginBottom:6}}>⏰ {a.time} · {apptDate.toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'})} · <strong style={{color:'var(--primary)'}}>{daysUntil(a.date)}</strong></div>
+                        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                          <span style={{padding:'3px 10px',background:'#f0eeff',color:'#7c5cbf',borderRadius:20,fontSize:'0.75rem',fontWeight:500}}>📝 {a.reason}</span>
+                          {a.urgency!=='Routine'&&<span className="badge badge-orange">🚦 {a.urgency}</span>}
+                        </div>
+                        {a.notes&&<div style={{marginTop:'0.625rem',padding:'8px 12px',background:'var(--accent)',borderRadius:8,fontSize:'0.78rem',color:'var(--text-muted)'}}>{a.notes}</div>}
+                      </div>
+                      <div style={{display:'flex',flexDirection:'column',gap:6,alignItems:'flex-end'}}>
+                        {cancelId===a.id?(
+                          <>
+                            <div style={{fontSize:'0.78rem',color:'var(--text-muted)',textAlign:'right',marginBottom:4}}>Cancel this appointment?</div>
+                            <div style={{display:'flex',gap:6}}>
+                              <button className="btn btn-danger btn-sm" onClick={()=>cancel(a.id)}>Yes, Cancel</button>
+                              <button className="btn btn-outline btn-sm" onClick={()=>setCancelId(null)}>Keep It</button>
+                            </div>
+                          </>
+                        ):(
+                          <button className="btn btn-danger btn-sm" onClick={()=>setCancelId(a.id)}>Cancel</button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ====== HISTORY ====== */}
+      {view==='history'&&(
+        <div className="slide-in">
+          {past.length===0?(
+            <div className="empty">
+              <div className="empty-icon">🗂</div>
+              <p>No past appointments yet</p>
+            </div>
+          ):(
+            <div className="card" style={{padding:0,overflow:'hidden'}}>
+              <div className="table-wrap">
+                <table className="table">
+                  <thead><tr><th>Doctor</th><th>Specialty</th><th>Date & Time</th><th>Visit Type</th><th>Reason</th><th>Status</th></tr></thead>
+                  <tbody>
+                    {past.map(a=>(
+                      <tr key={a.id}>
+                        <td style={{fontWeight:500}}>{a.doctorName}</td>
+                        <td style={{color:'var(--text-muted)',fontSize:'0.825rem'}}>{a.specialty}</td>
+                        <td style={{fontSize:'0.825rem',whiteSpace:'nowrap'}}>{new Date(a.date+'T12:00:00').toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})} {a.time}</td>
+                        <td><span className="badge badge-gray">{a.visitType}</span></td>
+                        <td style={{fontSize:'0.825rem',color:'var(--text-muted)'}}>{a.reason}</td>
+                        <td>
+                          <span className={`badge ${a.status==='cancelled'?'badge-red':'badge-gray'}`}>
+                            {a.status==='cancelled'?'❌ Cancelled':'✓ Completed'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Info cards */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:'1rem',marginTop:'2rem'}}>
+        {[
+          {icon:'🧪',title:'What to bring',desc:'ID, insurance card, medication list, previous lab results, and a list of current symptoms.'},
+          {icon:'📞',title:'Need to reschedule?',desc:'Contact the hospital directly or cancel your appointment here and book a new time slot.'},
+          {icon:'🚨',title:'Emergency care',desc:'For severe pain crises, high fever, or stroke symptoms, go to the ER immediately — do not wait for an appointment.'},
+          {icon:'💊',title:'Before your visit',desc:'Note any changes in symptoms, bring a 7-day symptom log, and list all medications with dosages.'},
+        ].map((c,i)=>(
+          <div key={i} style={{padding:'14px 16px',background:'var(--white)',border:'1.5px solid var(--border)',borderRadius:12,display:'flex',gap:10}}>
+            <span style={{fontSize:22,flexShrink:0}}>{c.icon}</span>
+            <div><div style={{fontWeight:600,fontSize:'0.875rem',marginBottom:4}}>{c.title}</div><div style={{fontSize:'0.8rem',color:'var(--text-muted)',lineHeight:1.55}}>{c.desc}</div></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+function DoctorMessages({user, setPage}) {
+  const uid = user?.id || 'guest';
+  const DOCTORS = [
+    {id:'d1',name:'Dr. Amara Osei',specialty:'Hematologist',hospital:'City Medical Center',color:'#1a6fa3',img:'AO',status:'online',response:'Usually responds in 2 hours'},
+    {id:'d2',name:'Dr. Sarah Mitchell',specialty:'Sickle Cell Specialist',hospital:"St. Luke's Hospital",color:'#2ecc8a',img:'SM',status:'online',response:'Usually responds in 1 hour'},
+    {id:'d3',name:'Dr. James Adeyemi',specialty:'Pediatric Hematologist',hospital:"Children's Health Clinic",color:'#7c5cbf',img:'JA',status:'away',response:'Usually responds in 4 hours'},
+    {id:'d4',name:'Dr. Priya Nair',specialty:'Internal Medicine & SCD',hospital:'Sunrise Healthcare',color:'#e05252',img:'PN',status:'online',response:'Usually responds in 3 hours'},
+    {id:'d5',name:'Dr. Michael Chen',specialty:'Pain Management',hospital:'Advanced Pain Clinic',color:'#f5a623',img:'MC',status:'away',response:'Usually responds in 6 hours'},
+    {id:'d6',name:'Dr. Fatima Al-Hassan',specialty:'Transfusion Medicine',hospital:'Regional Blood Center',color:'#0d9e75',img:'FA',status:'online',response:'Usually responds in 2 hours'},
+  ];
+
+  const allMsgs = DB.getDoctorMsgs(uid);
+  const [msgs, setMsgs] = React.useState(allMsgs);
+  const [activeDoc, setActiveDoc] = React.useState(null);
+  const [input, setInput] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [showNew, setShowNew] = React.useState(false);
+  const [newSubject, setNewSubject] = React.useState('');
+  const [newMsg, setNewMsg] = React.useState('');
+  const [newDocId, setNewDocId] = React.useState('');
+  const endRef = React.useRef(null);
+
+  React.useEffect(() => { endRef.current?.scrollIntoView({behavior:'smooth'}); }, [msgs, activeDoc]);
+
+  const getConv = (docId) => msgs[docId] || [];
+
+  const sendMsg = async () => {
+    if (!input.trim() || loading || !activeDoc) return;
+    const text = input.trim();
+    setInput('');
+    const doc = DOCTORS.find(d => d.id === activeDoc);
+    const conv = getConv(activeDoc);
+    const updated = {...msgs, [activeDoc]: [...conv, {role:'user', content:text, ts:new Date().toISOString()}]};
+    setMsgs(updated);
+    DB.saveDoctorMsgs(uid, updated);
+    setLoading(true);
+    const reply = await doctorChat(text, conv, doc, user.name || 'Patient');
+    const withReply = {...updated, [activeDoc]: [...updated[activeDoc], {role:'assistant', content:reply, ts:new Date().toISOString()}]};
+    setMsgs(withReply);
+    DB.saveDoctorMsgs(uid, withReply);
+    setLoading(false);
+  };
+
+  const startConv = async () => {
+    if (!newDocId || !newMsg.trim()) return;
+    const doc = DOCTORS.find(d => d.id === newDocId);
+    const greeting = newSubject ? `[Re: ${newSubject}]\n${newMsg.trim()}` : newMsg.trim();
+    const conv = getConv(newDocId);
+    const updated = {...msgs, [newDocId]: [...conv, {role:'user', content:greeting, ts:new Date().toISOString()}]};
+    setMsgs(updated);
+    DB.saveDoctorMsgs(uid, updated);
+    setShowNew(false); setNewSubject(''); setNewMsg(''); setNewDocId('');
+    setLoading(true);
+    setActiveDoc(newDocId);
+    const reply = await doctorChat(greeting, conv, doc, user.name || 'Patient');
+    const withReply = {...updated, [newDocId]: [...updated[newDocId], {role:'assistant', content:reply, ts:new Date().toISOString()}]};
+    setMsgs(withReply);
+    DB.saveDoctorMsgs(uid, withReply);
+    setLoading(false);
+  };
+
+  const fmtTime = (ts) => {
+    const d = new Date(ts);
+    const now = new Date();
+    const diffH = (now - d) / 3600000;
+    if (diffH < 0.017) return 'just now';
+    if (diffH < 1) return `${Math.round(diffH*60)}m ago`;
+    if (diffH < 24) return d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+    return d.toLocaleDateString('en',{month:'short',day:'numeric'});
+  };
+
+  const activeDoctor = DOCTORS.find(d => d.id === activeDoc);
+  const activeConv = activeDoc ? getConv(activeDoc) : [];
+  const docsWithMsgs = DOCTORS.filter(d => getConv(d.id).length > 0);
+  const docsWithoutMsgs = DOCTORS.filter(d => getConv(d.id).length === 0);
+
+  const quickMessages = [
+    "I've been experiencing increased pain in my joints today.",
+    "My last blood test showed low hemoglobin. Should I be concerned?",
+    "Can I get a refill for my Hydroxyurea prescription?",
+    "I have a question about my upcoming appointment.",
+    "I'm feeling very fatigued this week.",
+    "I had a mild crisis last night. What should I do?",
+  ];
+
+  return (
+    <div className="page fade-in" style={{paddingBottom:'2rem'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'1.5rem',flexWrap:'wrap',gap:'1rem'}}>
+        <div>
+          <h1 className="section-title">💬 Doctor Messages</h1>
+          <p className="section-sub">Communicate directly with your care team</p>
+        </div>
+        <button className="btn btn-primary" onClick={()=>setShowNew(true)}>+ New Message</button>
+      </div>
+
+      {/* New Message Modal */}
+      {showNew && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.45)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem'}}>
+          <div className="card slide-in" style={{width:'100%',maxWidth:520,maxHeight:'90vh',overflowY:'auto'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1.25rem'}}>
+              <h3 className="card-title" style={{margin:0}}>New Message to Doctor</h3>
+              <button onClick={()=>setShowNew(false)} style={{background:'none',border:'none',fontSize:22,cursor:'pointer',color:'var(--text-muted)'}}>×</button>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Select Doctor *</label>
+              <select className="form-input" value={newDocId} onChange={e=>setNewDocId(e.target.value)}>
+                <option value="">Choose a doctor...</option>
+                {DOCTORS.map(d=><option key={d.id} value={d.id}>{d.name} – {d.specialty}</option>)}
+              </select>
+            </div>
+            {newDocId && (
+              <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background:'var(--primary-light)',borderRadius:10,marginBottom:'1rem'}}>
+                {(() => { const doc=DOCTORS.find(d=>d.id===newDocId); return (
+                  <>
+                    <div style={{width:36,height:36,borderRadius:'50%',background:doc.color+'22',border:`2px solid ${doc.color}55`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.8rem',color:doc.color}}>{doc.img}</div>
+                    <div>
+                      <div style={{fontWeight:600,fontSize:'0.875rem'}}>{doc.name}</div>
+                      <div style={{fontSize:'0.75rem',color:'var(--text-muted)'}}>{doc.response}</div>
+                    </div>
+                    <div style={{marginLeft:'auto',width:8,height:8,borderRadius:'50%',background:doc.status==='online'?'var(--secondary)':'var(--warning)'}}/>
+                  </>
+                ); })()}
+              </div>
+            )}
+            <div className="form-group">
+              <label className="form-label">Subject (optional)</label>
+              <input className="form-input" value={newSubject} onChange={e=>setNewSubject(e.target.value)} placeholder="e.g. Pain crisis follow-up, Medication question..."/>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Message *</label>
+              <textarea className="form-input" style={{minHeight:100}} value={newMsg} onChange={e=>setNewMsg(e.target.value)} placeholder="Describe your concern, symptoms, or question..."/>
+            </div>
+            <div style={{marginBottom:'1rem'}}>
+              <label className="form-label">Quick Templates</label>
+              <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                {quickMessages.slice(0,4).map((q,i)=>(
+                  <button key={i} onClick={()=>setNewMsg(q)} style={{padding:'5px 10px',background:'var(--accent)',border:'1px solid var(--border)',borderRadius:20,fontSize:'0.75rem',cursor:'pointer',color:'var(--text)',fontFamily:'DM Sans,sans-serif',transition:'all 0.15s'}}
+                    onMouseOver={e=>e.currentTarget.style.background='var(--primary-light)'}
+                    onMouseOut={e=>e.currentTarget.style.background='var(--accent)'}>
+                    {q.length>40?q.slice(0,38)+'…':q}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="alert alert-info" style={{marginBottom:'1rem'}}>🔒 Messages are private and secure. For emergencies, call 911 or go to the ER immediately.</div>
+            <div style={{display:'flex',gap:8}}>
+              <button className="btn btn-outline" style={{flex:1,justifyContent:'center'}} onClick={()=>setShowNew(false)}>Cancel</button>
+              <button className="btn btn-primary" style={{flex:2,justifyContent:'center'}} disabled={!newDocId||!newMsg.trim()} onClick={startConv}>Send Message →</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className='msg-grid' style={{display:'grid',gridTemplateColumns:'300px 1fr',gap:'1.5rem',minHeight:560}}>
+        {/* Sidebar */}
+        <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+          {/* Active conversations */}
+          {docsWithMsgs.length > 0 && (
+            <div className="card" style={{padding:0,overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid var(--border)',fontSize:'0.78rem',fontWeight:600,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.04em'}}>
+                Recent Conversations
+              </div>
+              {docsWithMsgs.map(doc => {
+                const conv = getConv(doc.id);
+                const last = conv[conv.length-1];
+                const unread = conv.filter(m=>m.role==='assistant').length > 0;
+                return (
+                  <div key={doc.id} onClick={()=>setActiveDoc(doc.id)}
+                    style={{padding:'12px 16px',cursor:'pointer',background:activeDoc===doc.id?'var(--primary-light)':'var(--white)',borderBottom:'1px solid var(--border)',borderLeft:activeDoc===doc.id?`3px solid ${doc.color}`:'3px solid transparent',transition:'all 0.15s'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:10}}>
+                      <div style={{position:'relative',flexShrink:0}}>
+                        <div style={{width:38,height:38,borderRadius:'50%',background:doc.color+'22',border:`2px solid ${doc.color}55`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.8rem',color:doc.color}}>{doc.img}</div>
+                        <div style={{position:'absolute',bottom:0,right:0,width:10,height:10,borderRadius:'50%',background:doc.status==='online'?'#2ecc8a':'#f5a623',border:'2px solid white'}}/>
+                      </div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontWeight:600,fontSize:'0.85rem',color:'var(--text)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{doc.name}</div>
+                        <div style={{fontSize:'0.75rem',color:'var(--text-muted)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+                          {last ? (last.role==='user'?'You: ':'')+last.content.slice(0,35)+(last.content.length>35?'…':'') : ''}
+                        </div>
+                      </div>
+                      <div style={{flexShrink:0,textAlign:'right'}}>
+                        <div style={{fontSize:'0.7rem',color:'var(--text-muted)'}}>{last?fmtTime(last.ts):''}</div>
+                        {unread&&activeDoc!==doc.id&&<div style={{width:8,height:8,background:'var(--primary)',borderRadius:'50%',marginLeft:'auto',marginTop:4}}/>}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* All doctors */}
+          <div className="card" style={{padding:0,overflow:'hidden'}}>
+            <div style={{padding:'12px 16px',borderBottom:'1px solid var(--border)',fontSize:'0.78rem',fontWeight:600,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.04em'}}>
+              Your Care Team
+            </div>
+            {DOCTORS.map(doc=>(
+              <div key={doc.id} onClick={()=>setActiveDoc(doc.id)}
+                style={{padding:'10px 16px',cursor:'pointer',background:activeDoc===doc.id?'var(--primary-light)':'var(--white)',borderBottom:'1px solid var(--border)',borderLeft:activeDoc===doc.id?`3px solid ${doc.color}`:'3px solid transparent',transition:'all 0.15s',display:'flex',alignItems:'center',gap:10}}>
+                <div style={{position:'relative',flexShrink:0}}>
+                  <div style={{width:34,height:34,borderRadius:'50%',background:doc.color+'22',border:`1.5px solid ${doc.color}55`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.75rem',color:doc.color}}>{doc.img}</div>
+                  <div style={{position:'absolute',bottom:0,right:0,width:9,height:9,borderRadius:'50%',background:doc.status==='online'?'#2ecc8a':'#f5a623',border:'2px solid white'}}/>
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:500,fontSize:'0.82rem',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{doc.name}</div>
+                  <div style={{fontSize:'0.72rem',color:'var(--text-muted)'}}>{doc.specialty}</div>
+                </div>
+                {getConv(doc.id).length>0 && <span className="badge badge-blue" style={{fontSize:'0.68rem'}}>{getConv(doc.id).length}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="card" style={{padding:0,display:'flex',flexDirection:'column',minHeight:560}}>
+          {!activeDoc ? (
+            <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'2rem',textAlign:'center'}}>
+              <div style={{fontSize:'3.5rem',marginBottom:'1rem'}}>💬</div>
+              <h3 style={{fontFamily:'Playfair Display,serif',fontSize:'1.25rem',fontWeight:600,marginBottom:'0.5rem'}}>Message Your Doctor</h3>
+              <p style={{color:'var(--text-muted)',fontSize:'0.875rem',maxWidth:380,lineHeight:1.7,marginBottom:'1.5rem'}}>
+                Select a doctor from the left to start a conversation, or click "New Message" to compose a message to any member of your care team.
+              </p>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.75rem',width:'100%',maxWidth:400}}>
+                {DOCTORS.slice(0,4).map(doc=>(
+                  <button key={doc.id} onClick={()=>setActiveDoc(doc.id)}
+                    style={{padding:'12px',background:'var(--accent)',border:`1.5px solid ${doc.color}33`,borderRadius:12,cursor:'pointer',display:'flex',alignItems:'center',gap:10,textAlign:'left',fontFamily:'DM Sans,sans-serif',transition:'all 0.2s'}}
+                    onMouseOver={e=>e.currentTarget.style.borderColor=doc.color}
+                    onMouseOut={e=>e.currentTarget.style.borderColor=doc.color+'33'}>
+                    <div style={{width:32,height:32,borderRadius:'50%',background:doc.color+'22',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.75rem',color:doc.color,flexShrink:0}}>{doc.img}</div>
+                    <div>
+                      <div style={{fontWeight:600,fontSize:'0.78rem',color:'var(--text)'}}>{doc.name.split(' ').slice(0,2).join(' ')}</div>
+                      <div style={{fontSize:'0.7rem',color:'var(--text-muted)'}}>{doc.specialty.split(' ').slice(0,2).join(' ')}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Chat header */}
+              <div style={{padding:'14px 18px',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:12,background:'var(--white)',borderRadius:'var(--radius-lg) var(--radius-lg) 0 0'}}>
+                <button onClick={()=>setActiveDoc(null)} style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-muted)',fontSize:'1.2rem',padding:'0 4px'}}>←</button>
+                <div style={{position:'relative'}}>
+                  <div style={{width:42,height:42,borderRadius:'50%',background:activeDoctor.color+'22',border:`2px solid ${activeDoctor.color}55`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.9rem',color:activeDoctor.color}}>{activeDoctor.img}</div>
+                  <div style={{position:'absolute',bottom:0,right:0,width:11,height:11,borderRadius:'50%',background:activeDoctor.status==='online'?'#2ecc8a':'#f5a623',border:'2px solid white'}}/>
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:700,fontSize:'0.95rem'}}>{activeDoctor.name}</div>
+                  <div style={{fontSize:'0.75rem',color:'var(--text-muted)'}}>{activeDoctor.specialty} · {activeDoctor.hospital} · <span style={{color:activeDoctor.status==='online'?'var(--secondary)':'var(--warning)'}}>{activeDoctor.status==='online'?'● Online':'● Away'}</span></div>
+                </div>
+                <div style={{fontSize:'0.72rem',color:'var(--text-muted)',textAlign:'right'}}>
+                  <div>{activeDoctor.response}</div>
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div style={{flex:1,overflowY:'auto',padding:'16px',display:'flex',flexDirection:'column',gap:12,minHeight:0,maxHeight:380}}>
+                {activeConv.length === 0 ? (
+                  <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',padding:'2rem',color:'var(--text-muted)'}}>
+                    <div style={{width:56,height:56,borderRadius:'50%',background:activeDoctor.color+'18',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.5rem',marginBottom:'1rem'}}>{activeDoctor.img}</div>
+                    <div style={{fontWeight:500,marginBottom:'0.5rem'}}>Start your conversation with {activeDoctor.name}</div>
+                    <div style={{fontSize:'0.8rem',lineHeight:1.6,maxWidth:320,marginBottom:'1.25rem'}}>This is a secure private channel. Describe your symptoms, ask about medications, or follow up on your treatment plan.</div>
+                    <div style={{display:'flex',flexWrap:'wrap',gap:6,justifyContent:'center'}}>
+                      {quickMessages.map((q,i)=>(
+                        <button key={i} onClick={()=>setInput(q)} style={{padding:'5px 12px',background:'var(--accent)',border:'1px solid var(--border)',borderRadius:20,fontSize:'0.75rem',cursor:'pointer',color:'var(--text)',fontFamily:'DM Sans,sans-serif'}}>{q.length>35?q.slice(0,33)+'…':q}</button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{textAlign:'center',fontSize:'0.72rem',color:'var(--text-muted)',padding:'4px 12px',background:'var(--accent)',borderRadius:20,alignSelf:'center'}}>Secure · Private · SICKLERX Portal</div>
+                    {activeConv.map((m, i) => (
+                      <div key={i} style={{display:'flex',gap:10,alignItems:'flex-end',justifyContent:m.role==='user'?'flex-end':'flex-start'}}>
+                        {m.role==='assistant' && (
+                          <div style={{width:30,height:30,borderRadius:'50%',background:activeDoctor.color+'22',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.7rem',color:activeDoctor.color,flexShrink:0}}>{activeDoctor.img}</div>
+                        )}
+                        <div style={{maxWidth:'72%'}}>
+                          <div style={{padding:'10px 14px',borderRadius:16,background:m.role==='user'?'var(--primary)':'var(--white)',color:m.role==='user'?'white':'var(--text)',fontSize:'0.875rem',lineHeight:1.6,border:m.role==='assistant'?'1.5px solid var(--border)':'none',borderBottomLeftRadius:m.role==='assistant'?4:16,borderBottomRightRadius:m.role==='user'?4:16}}>
+                            {m.content}
+                          </div>
+                          <div style={{fontSize:'0.68rem',color:'var(--text-muted)',marginTop:3,textAlign:m.role==='user'?'right':'left'}}>{fmtTime(m.ts)}{m.role==='user'?' · You':' · '+activeDoctor.name.split(' ')[0]+' '+activeDoctor.name.split(' ')[1]}</div>
+                        </div>
+                        {m.role==='user' && (
+                          <div style={{width:30,height:30,borderRadius:'50%',background:'var(--primary-light)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.7rem',fontWeight:700,color:'var(--primary)',flexShrink:0}}>{(user.name||'P').split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+                        )}
+                      </div>
+                    ))}
+                    {loading && (
+                      <div style={{display:'flex',gap:10,alignItems:'flex-end'}}>
+                        <div style={{width:30,height:30,borderRadius:'50%',background:activeDoctor.color+'22',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'0.7rem',color:activeDoctor.color}}>{activeDoctor.img}</div>
+                        <div style={{padding:'10px 14px',background:'var(--white)',border:'1.5px solid var(--border)',borderRadius:16,borderBottomLeftRadius:4,display:'flex',gap:5,alignItems:'center'}}>
+                          <span className="dot"/><span className="dot"/><span className="dot"/>
+                          <span style={{fontSize:'0.72rem',color:'var(--text-muted)',marginLeft:4}}>{activeDoctor.name.split(' ')[0]} is typing…</span>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+                <div ref={endRef}/>
+              </div>
+
+              {/* Input */}
+              <div style={{padding:'12px 16px',borderTop:'1px solid var(--border)',display:'flex',gap:8,alignItems:'flex-end'}}>
+                <textarea className="form-input" style={{flex:1,borderRadius:14,minHeight:42,maxHeight:100,resize:'none',fontSize:'0.875rem',padding:'10px 14px'}}
+                  value={input} onChange={e=>setInput(e.target.value)}
+                  onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}}
+                  placeholder={`Message ${activeDoctor.name.split(' ')[0]}… (Enter to send)`}/>
+                <button className="btn btn-primary" onClick={sendMsg} disabled={loading||!input.trim()} style={{borderRadius:12,padding:'10px 18px',flexShrink:0}}>
+                  {loading?<span className="spinner"/>:'Send'}
+                </button>
+              </div>
+
+              {/* Quick replies */}
+              <div style={{padding:'6px 16px 12px',display:'flex',gap:6,flexWrap:'wrap',borderTop:'1px solid var(--border)'}}>
+                {quickMessages.slice(0,4).map((q,i)=>(
+                  <button key={i} onClick={()=>setInput(q)} style={{padding:'4px 10px',background:'var(--accent)',border:'1px solid var(--border)',borderRadius:20,fontSize:'0.72rem',cursor:'pointer',color:'var(--text)',fontFamily:'DM Sans,sans-serif',whiteSpace:'nowrap'}}>{q.length>30?q.slice(0,28)+'…':q}</button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Info strip */}
+      <div style={{marginTop:'1.5rem',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'1rem'}}>
+        {[
+          {icon:'🔒',t:'Secure & Private',d:'All messages are end-to-end encrypted and HIPAA compliant.'},
+          {icon:'⚡',t:'Fast Response',d:'Most doctors respond within 1–6 hours on weekdays.'},
+          {icon:'🚨',t:'Emergencies',d:'Never use messages for emergencies. Call 911 or go to the ER.'},
+          {icon:'📋',t:'Message History',d:'All conversations are saved and accessible anytime.'},
+        ].map((c,i)=>(
+          <div key={i} style={{padding:'12px 14px',background:'var(--white)',border:'1.5px solid var(--border)',borderRadius:12,display:'flex',gap:10}}>
+            <span style={{fontSize:18,flexShrink:0}}>{c.icon}</span>
+            <div><div style={{fontWeight:600,fontSize:'0.825rem',marginBottom:3}}>{c.t}</div><div style={{fontSize:'0.775rem',color:'var(--text-muted)',lineHeight:1.55}}>{c.d}</div></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="footer">
+      <div><strong style={{color:'var(--primary)'}}>SICKLERX – The Cure</strong> · Smart healthcare management for sickle cell patients</div>
+      <div style={{marginTop:'0.5rem',opacity:0.7}}>For medical emergencies, call <strong style={{color:'var(--danger)'}}>911</strong> or contact your healthcare provider immediately</div>
+    </footer>
+  );
+}
+
+function App() {
+  const [page,setPage]=useState('home');
+  const [user,setUser]=useState(DB.getUser());
+  const login=u=>{DB.setUser(u);setUser(u)};
+  const logout=()=>{DB.clearUser();setUser(null);setPage('home')};
+  const go=p=>{setPage(p);window.scrollTo(0,0)};
+  const render=()=>{
+    if(page==='home')return <Home setPage={go}/>;
+    if(page==='register')return <Register setPage={go} login={login}/>;
+    if(page==='login')return <Login setPage={go} login={login}/>;
+    if(page==='dashboard')return user?<Dashboard user={user} setPage={go}/>:<Login setPage={go} login={login}/>;
+    if(page==='medications')return <MedicationTracker user={user||{id:'guest'}}/>;
+    if(page==='symptoms')return <SymptomMonitor user={user||{id:'guest'}}/>;
+    if(page==='chatbot')return <ChatbotPage/>;
+    if(page==='appointments')return <AppointmentBooking user={user||{id:'guest'}} setPage={go}/>;
+    if(page==='messages')return <DoctorMessages user={user||{id:'guest',name:'Guest'}} setPage={go}/>;
+    return <Home setPage={go}/>;
+  };
+  return (
+    <div>
+      <Navbar page={page} setPage={go} user={user} logout={logout}/>
+      <main style={{minHeight:'calc(100vh - 64px - 80px)'}}>{render()}</main>
+      <Footer/>
+      <ChatWidget user={user}/>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
